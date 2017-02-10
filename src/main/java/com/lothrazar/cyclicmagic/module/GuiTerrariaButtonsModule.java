@@ -3,18 +3,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.lothrazar.cyclicmagic.IHasConfig;
+import com.lothrazar.cyclicmagic.ModCyclic;
 import com.lothrazar.cyclicmagic.gui.button.ButtonTerrariaDepositAll;
 import com.lothrazar.cyclicmagic.gui.button.ButtonTerrariaLootAll;
 import com.lothrazar.cyclicmagic.gui.button.ButtonTerrariaQuickStack;
 import com.lothrazar.cyclicmagic.gui.button.ButtonTerrariaRestock;
 import com.lothrazar.cyclicmagic.gui.player.GuiPlayerExtended;
 import com.lothrazar.cyclicmagic.gui.playerworkbench.GuiPlayerExtWorkbench;
+import com.lothrazar.cyclicmagic.gui.villager.GuiMerchantBetter;
+import com.lothrazar.cyclicmagic.net.PacketTileDetector;
 import com.lothrazar.cyclicmagic.util.Const;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiMerchant;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.entity.IMerchant;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.village.MerchantRecipe;
+import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
+import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -37,6 +47,77 @@ public class GuiTerrariaButtonsModule extends BaseEventModule implements IHasCon
   public void onGuiPostInit(InitGuiEvent.Post event) {
     if (enableTerrariaButtons) {
       addButtonsToGui(event);
+    }
+    else if (event.getGui() instanceof GuiMerchant) {
+      this.improveMerchant(event, (GuiMerchant) event.getGui());
+    }
+  }
+  @SideOnly(Side.CLIENT)
+  private void improveMerchant(Post event, GuiMerchant gui) {
+//    if (gui.getMerchant() instanceof EntityVillager) { (EntityVillager) 
+    IMerchant merchant =gui.getMerchant();
+      List<GuiButton> list = event.getButtonList();
+      MerchantRecipeList merchantrecipelist = merchant.getRecipes(gui.mc.thePlayer);
+      if(merchantrecipelist == null){
+        System.out.println("WAT null");
+        return;
+      }
+      int i = (gui.width - gui.xSize) / 2;
+      int j = (gui.height - gui.ySize) / 2;
+      int btnId = 1;
+      int x = i + 158;
+      int y = j + padding;
+//      this.nextButton = (GuiMerchantBetter.MerchantButton) this.addButton(new GuiMerchantBetter.MerchantButton(btnId, x, y, true));
+      btnId = 2;
+      x = i + padding;
+      y = j + padding;
+      int idx = 0;
+      int h = 20, w = 60;
+      x = i + padding - w - 2 * padding;
+      y = j + padding ;
+      for (MerchantRecipe r : merchantrecipelist) {
+        MerchantJumpButton slotBtn = (MerchantJumpButton) new MerchantJumpButton(btnId, x, y, w, h, idx,r);
+        y += h + padding;
+   
+        btnId++;
+        idx++;
+        list.add(slotBtn);
+      }
+      
+      
+//    }
+  }
+  @SideOnly(Side.CLIENT)
+  static class MerchantJumpButton extends GuiButton {
+    private int recipeIndex;
+    private MerchantRecipe myRecipe;
+    public MerchantJumpButton(int buttonId, int x, int y, int widthIn, int heightIn, int r
+        ,MerchantRecipe recipe) {
+      super(buttonId, x, y, widthIn, heightIn, "");
+      setRecipeIndex(r);
+      this.myRecipe=recipe;
+    }
+    public int getRecipeIndex() {
+      return recipeIndex;
+    }
+    public void setRecipeIndex(int recipeIndex) {
+      this.recipeIndex = recipeIndex;
+    }
+@Override
+public void drawButtonForegroundLayer(int mouseX, int mouseY)
+{
+ 
+  ModCyclic.proxy.renderItemOnScreen(myRecipe.getItemToBuy(), mouseX,mouseY);
+}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+      boolean pressed = super.mousePressed(mc, mouseX, mouseY);
+      if (pressed) {
+        ModCyclic.logger.info("pressed "+this.recipeIndex);
+//        ModCyclic.network.sendToServer(new PacketTileDetector(tilePos, goUp, type));
+      }
+      return pressed;
     }
   }
   @SideOnly(Side.CLIENT)
