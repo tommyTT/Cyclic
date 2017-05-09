@@ -21,8 +21,8 @@ public class BlockScaffoldingResponsive extends BlockScaffolding implements IHas
   }
   @SuppressWarnings("deprecation")
   @Override
-  public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-    super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+  public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+    super.neighborChanged(state, worldIn, pos, blockIn);
     if (blockIn == this) {
       worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
     }

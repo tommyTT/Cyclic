@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 
 public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements IInventory, ISidedInventory {
@@ -18,10 +17,10 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
   public static final String NBT_TIMER = "Timer";
   public static final String NBT_REDST = "redstone";
   protected static final String NBT_SIZE = "size";
-  protected NonNullList<ItemStack> inv;
+  protected ItemStack[] inv;
   public TileEntityBaseMachineInvo(int invoSize) {
     super();
-    inv = NonNullList.withSize(invoSize, ItemStack.EMPTY);
+    inv = new ItemStack[invoSize];
   }
   //=======
   //public abstract class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements IInventory, ISidedInventory {
@@ -76,8 +75,8 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
   public void closeInventory(EntityPlayer player) {}
   @Override
   public void clear() {
-    for (int i = 0; i < this.inv.size(); ++i) {
-      inv.set(i, ItemStack.EMPTY);
+    for (int i = 0; i < this.getSizeInventory(); ++i) {
+      this.setInventorySlotContents(i, null);
     }
   }
   protected void shiftAllUp() {
@@ -88,20 +87,20 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
   protected void shiftPairUp(int low, int high) {
     ItemStack main = getStackInSlot(low);
     ItemStack second = getStackInSlot(high);
-    if (main == ItemStack.EMPTY && second != ItemStack.EMPTY) { // if the one below this is not
+    if (main == null && second != null) { // if the one below this is not
       // empty, move it up
-      this.setInventorySlotContents(high, ItemStack.EMPTY);
+      this.setInventorySlotContents(high, null);
       this.setInventorySlotContents(low, second);
     }
   }
   @Override
   public int getSizeInventory() {
-    return inv.size();
+    return inv.length;
   }
   @Override
   public ItemStack getStackInSlot(int index) {
-    if (index < 0 || index >= getSizeInventory()) { return ItemStack.EMPTY; }
-    return inv.get(index);
+    if (index < 0 || index >= getSizeInventory()) { return null; }
+    return inv[index];
   }
   public ItemStack decrStackSize(int index) {
     return this.decrStackSize(index, 1);
@@ -109,14 +108,14 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
   @Override
   public ItemStack decrStackSize(int index, int count) {
     ItemStack stack = getStackInSlot(index);
-    if (stack != ItemStack.EMPTY) {
+    if (stack != null) {
       if (stack.getMaxStackSize() <= count) {
-        setInventorySlotContents(index, ItemStack.EMPTY);
+        setInventorySlotContents(index, null);
       }
       else {
         stack = stack.splitStack(count);
         if (stack.getMaxStackSize() == 0) {
-          setInventorySlotContents(index, ItemStack.EMPTY);
+          setInventorySlotContents(index, null);
         }
       }
     }
@@ -125,30 +124,22 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
   @Override
   public ItemStack removeStackFromSlot(int index) {
     ItemStack stack = getStackInSlot(index);
-    setInventorySlotContents(index, ItemStack.EMPTY);
+    setInventorySlotContents(index, null);
     return stack;
   }
   @Override
   public void setInventorySlotContents(int index, ItemStack stack) {
     if (stack == null) {
-      stack = ItemStack.EMPTY;
+      stack = null;
     }
-    if (stack != ItemStack.EMPTY && stack.getMaxStackSize() > getInventoryStackLimit()) {
-      stack.setCount(getInventoryStackLimit());
+    if (stack != null && stack.getMaxStackSize() > getInventoryStackLimit()) {
+      stack.stackSize = getInventoryStackLimit();
     }
-    inv.set(index, stack);
+    inv[index] = stack;
   }
   @Override
   public int[] getSlotsForFace(EnumFacing side) {
     return new int[] {};
-  }
-  @Override
-  public boolean isEmpty() {
-    return false;
-  }
-  @Override
-  public boolean isUsableByPlayer(EntityPlayer player) {
-    return true;
   }
   @Override
   public void readFromNBT(NBTTagCompound compound) {
@@ -160,8 +151,8 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
     for (int i = 0; i < tagList.tagCount(); i++) {
       NBTTagCompound tag = (NBTTagCompound) tagList.getCompoundTagAt(i);
       byte slot = tag.getByte(NBT_SLOT);
-      if (slot >= 0 && slot < inv.size()) {
-        inv.set(slot, UtilNBT.itemFromNBT(tag));
+      if (slot >= 0 && slot < inv.length) {
+        inv[slot] = UtilNBT.itemFromNBT(tag);
       }
     }
   }
@@ -172,9 +163,9 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
   }
   private void writeInvoToNBT(NBTTagCompound compound) {
     NBTTagList itemList = new NBTTagList();
-    for (int i = 0; i < inv.size(); i++) {
-      ItemStack stack = inv.get(i);
-      if (stack != ItemStack.EMPTY) {
+    for (int i = 0; i < this.getSizeInventory(); i++) {
+      ItemStack stack = this.getStackInSlot(i);
+      if (stack != null) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setByte(NBT_SLOT, (byte) i);
         stack.writeToNBT(tag);
@@ -196,9 +187,9 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
   public ItemStack tryMergeStackIntoSlot(ItemStack held, int furnaceSlot) {
     ItemStack current = this.getStackInSlot(furnaceSlot);
     boolean success = false;
-    if (current.isEmpty()) {
+    if (current == null) {
       this.setInventorySlotContents(furnaceSlot, held);
-      held = ItemStack.EMPTY;
+      held = null;
       success = true;
     }
     else if (held.isItemEqual(current)) {
@@ -206,11 +197,15 @@ public class TileEntityBaseMachineInvo extends TileEntityBaseMachine implements 
       UtilItemStack.mergeItemsBetweenStacks(held, current);
     }
     if (success) {
-      if (held != ItemStack.EMPTY && held.getMaxStackSize() == 0) {// so now we just fix if something is size zero
-        held = ItemStack.EMPTY;
+      if (held != null && held.getMaxStackSize() == 0) {// so now we just fix if something is size zero
+        held = null;
       }
       this.markDirty();
     }
     return held;
+  }
+  @Override
+  public boolean isUseableByPlayer(EntityPlayer player) {
+    return true;
   }
 }

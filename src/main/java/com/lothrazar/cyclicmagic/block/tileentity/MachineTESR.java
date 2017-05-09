@@ -23,7 +23,7 @@ public class MachineTESR extends BaseMachineTesr<TileEntityBaseMachineInvo> {
     renderAnimation(te);
     if (this.itemSlotAbove >= 0) {
       ItemStack stack = te.getStackInSlot(this.itemSlotAbove);
-      if (stack.isEmpty() == false) {
+      if (stack!=null) {
         renderItem(te, stack, 0.99f);
       }
     }

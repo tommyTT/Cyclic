@@ -1,6 +1,7 @@
 package com.lothrazar.cyclicmagic.block;
 import com.lothrazar.cyclicmagic.IHasRecipe;
 import com.lothrazar.cyclicmagic.registry.RecipeRegistry;
+import com.sun.istack.internal.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,9 +20,9 @@ public class BlockScaffoldingReplace extends BlockScaffolding implements IHasRec
     this.dropBlock = true;
   }
   @Override
-  public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    ItemStack heldItem = playerIn.getHeldItem(hand);
-    if (heldItem.isEmpty()) { return false; }
+  public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+//    ItemStack heldItem = playerIn.getHeldItem(hand);
+    if (heldItem==null) { return false; }
     Block b = Block.getBlockFromItem(heldItem.getItem());
     if (b != null && b != Blocks.AIR && !(b instanceof BlockScaffolding)) {
       worldIn.destroyBlock(pos, dropBlock);
