@@ -12,8 +12,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class GuiBaseContainer extends GuiContainer {
   public int FONTCOLOR = 4210752;
-  private static final int texture_width = 176;
-  private static final int texture_height = 166;
+  public static final int WIDTH = 176;
+  public static final int HEIGHT = 166;
   private TileEntityBaseMachineInvo tile;
   public GuiBaseContainer(Container inventorySlotsIn, TileEntityBaseMachineInvo tile) {
     super(inventorySlotsIn);
@@ -47,8 +47,8 @@ public abstract class GuiBaseContainer extends GuiContainer {
       this.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6);
     }
   }
-  public void drawString(String s, int x, int y){
-    this.fontRendererObj.drawString(s,x, y, FONTCOLOR);
+  public void drawString(String s, int x, int y) {
+    this.fontRendererObj.drawString(s, x, y, FONTCOLOR);
   }
   public int getMiddleY() {
     int yMiddle = (this.height - this.ySize) / 2;
@@ -66,7 +66,8 @@ public abstract class GuiBaseContainer extends GuiContainer {
     int thisX = getMiddleX();
     int thisY = getMiddleY();
     int u = 0, v = 0;
-    Gui.drawModalRectWithCustomSizedTexture(thisX, thisY, u, v, this.xSize, this.ySize, texture_width, texture_height);
+    Gui.drawModalRectWithCustomSizedTexture(thisX, thisY, u, v, this.xSize, this.ySize, this.xSize, this.ySize);
+    // Gui.drawModalRectWithCustomSizedTexture(thisX, thisY, u, v, this.xSize, this.ySize, WIDTH, HEIGHT);
   }
   @Override
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -75,8 +76,9 @@ public abstract class GuiBaseContainer extends GuiContainer {
     for (int i = 0; i < buttonList.size(); i++) {
       if (buttonList.get(i).isMouseOver() && buttonList.get(i) instanceof ITooltipButton) {
         btn = (ITooltipButton) buttonList.get(i);
-        if (btn.getTooltips() != null)
+        if (btn.getTooltips() != null) {
           drawHoveringText(btn.getTooltips(), mouseX, mouseY, fontRendererObj);
+        }
         break;// cant hover on 2 at once
       }
     }

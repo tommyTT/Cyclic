@@ -1,5 +1,4 @@
 package com.lothrazar.cyclicmagic;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 public class ModLogger {
@@ -11,9 +10,6 @@ public class ModLogger {
   public void info(String string) {
     if (sendInfo)
       logger.info(string);
-  }
-  public void warn(String string) {
-    logger.log(Level.WARN, string);
   }
   public void error(String string) {
     logger.error(string);

@@ -18,7 +18,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -65,7 +67,7 @@ public class ItemToolSwap extends BaseTool implements IHasRecipe {
       }
     }
     public static int get(ItemStack wand) {
-      if (wand == null) { return 0; }
+      if (wand.isEmpty()) { return 0; }
       NBTTagCompound tags = UtilNBT.getItemStackNBT(wand);
       return tags.getInteger(NBT);
     }
@@ -93,7 +95,7 @@ public class ItemToolSwap extends BaseTool implements IHasRecipe {
   public void onHit(PlayerInteractEvent.LeftClickBlock event) {
     EntityPlayer player = event.getEntityPlayer();
     ItemStack held = player.getHeldItem(event.getHand());
-    if (held != null && held.getItem() == this) {
+    if (!held.isEmpty() && held.getItem() == this) {
       if (ActionType.getTimeout(held) > 0) {
         //without a timeout, this fires every tick. so you 'hit once' and get this happening 6 times
         return;
@@ -110,23 +112,24 @@ public class ItemToolSwap extends BaseTool implements IHasRecipe {
   @SideOnly(Side.CLIENT)
   @SubscribeEvent(priority = EventPriority.LOWEST)
   public void onRender(RenderGameOverlayEvent.Post event) {
-    EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+    EntityPlayer player = Minecraft.getMinecraft().player;
     ItemStack held = player.getHeldItem(EnumHand.MAIN_HAND);
     if (event.isCanceled() || event.getType() != ElementType.EXPERIENCE) { return; }
-    if (held != null && held.getItem() == this) {
+    if (!held.isEmpty() && held.getItem() == this) {
       int slot = UtilPlayer.getFirstSlotWithBlock(player);
       if (slot >= 0) {
         ItemStack stack = player.inventory.getStackInSlot(slot);
         int leftOff = 0, rightOff = -18, topOff = 0, bottOff = 0;
         int xmain = RenderLoc.locToX(ItemToolsModule.renderLocation, leftOff, rightOff);
         int ymain = RenderLoc.locToY(ItemToolsModule.renderLocation, topOff, bottOff);
-        if (stack != null)
+        if (!stack.isEmpty())
           ModCyclic.proxy.renderItemOnScreen(stack, xmain, ymain);
       }
     }
   }
   @Override
-  public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World worldObj, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+  public EnumActionResult onItemUse(EntityPlayer player, World worldObj, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    ItemStack stack = player.getHeldItem(hand);
     //if we only run this on server, clients dont get the udpate
     //so run it only on client, let packet run the server
     try {
@@ -134,15 +137,18 @@ public class ItemToolSwap extends BaseTool implements IHasRecipe {
         ModCyclic.network.sendToServer(new PacketSwapBlock(pos, side, ActionType.values()[ActionType.get(stack)], this.getWandType()));
       }
       player.swingArm(hand);
-      //      this.onUse(stack, player, worldObj, hand);
       player.getCooldownTracker().setCooldown(this, COOLDOWN);
     }
     catch (ConcurrentModificationException e) {
-      ModCyclic.logger.warn("ConcurrentModificationException");
-      ModCyclic.logger.warn(e.getMessage());// message is null??
-      ModCyclic.logger.warn(e.getStackTrace().toString());
+      ModCyclic.logger.error("ConcurrentModificationException");
+      ModCyclic.logger.error(e.getMessage());// message is null??
+      ModCyclic.logger.error(e.getStackTrace().toString());
     }
-    return super.onItemUse(stack, player, worldObj, pos, hand, side, hitX, hitY, hitZ);// EnumActionResult.PASS;
+    return EnumActionResult.FAIL;//super.onItemUse( player, worldObj, pos, hand, side, hitX, hitY, hitZ);// EnumActionResult.PASS;
+  }
+  @Override
+  public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+    return new ActionResult<ItemStack>(EnumActionResult.FAIL, playerIn.getHeldItem(hand));
   }
   @SideOnly(Side.CLIENT)
   public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
@@ -155,8 +161,8 @@ public class ItemToolSwap extends BaseTool implements IHasRecipe {
     super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
   }
   @Override
-  public void addRecipe() {
-    ItemStack ingredient = null;
+  public IRecipe addRecipe() {
+    ItemStack ingredient = ItemStack.EMPTY;
     switch (this.getWandType()) {
       case MATCH:
         ingredient = new ItemStack(Items.EMERALD);
@@ -165,7 +171,7 @@ public class ItemToolSwap extends BaseTool implements IHasRecipe {
         ingredient = new ItemStack(Blocks.LAPIS_BLOCK);
       break;
     }
-    GameRegistry.addRecipe(new ItemStack(this),
+    return GameRegistry.addShapedRecipe(new ItemStack(this),
         " gi",
         "oig",
         "oo ",

@@ -56,28 +56,22 @@ public class BlockDimensionOre extends BlockOre {
     GameRegistry.addSmelting(this, out, 1);
   }
   public void trySpawnTriggeredEntity(World world, BlockPos pos) {
-    if (WorldGenModule.oreSpawns == false) { return;//config has disabled spawning no matter what
-    }
+    if (WorldGenModule.oreSpawns == false) { return; } //config has disabled spawning no matter what
     if (this.spawn != null) {
       int rand = world.rand.nextInt(100);
       if (rand < this.spawnChance) {
-        Entity e;
+        Entity e = null;
         switch (this.spawn) {
           case ENDERMITE:
             e = new EntityEndermite(world);
-            e.setPosition(pos.getX(), pos.getY(), pos.getZ());
           break;
           case SILVERFISH:
             e = new EntitySilverfish(world);
-            //magma cube: setSlimeSize is private BOO
-            e.setPosition(pos.getX(), pos.getY(), pos.getZ());
-          break;
-          default:
-            e = null;
           break;
         }
         if (e != null) {
-          world.spawnEntityInWorld(e);
+          e.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+          world.spawnEntity(e);
         }
       }
     }
@@ -100,7 +94,7 @@ public class BlockDimensionOre extends BlockOre {
   @Override
   public int getExpDrop(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos, int fortune) {
     Random rand = world instanceof World ? ((World) world).rand : new Random();
-    return MathHelper.getRandomIntegerInRange(rand, 2, 5);
+    return MathHelper.getInt(rand, 2, 5);
   }
   @Override
   public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {

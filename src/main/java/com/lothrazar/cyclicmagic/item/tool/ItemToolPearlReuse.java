@@ -8,6 +8,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -29,13 +30,14 @@ public class ItemToolPearlReuse extends BaseTool implements IHasRecipe {
     orbType = o;
   }
   @Override
-  public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+  public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+    ItemStack itemStackIn = playerIn.getHeldItem(hand);
     worldIn.playSound((EntityPlayer) null, playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.ENTITY_ENDERPEARL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
     playerIn.getCooldownTracker().setCooldown(this, cooldown);
     if (!worldIn.isRemote) {
       EntityEnderPearl entityenderpearl = new EntityEnderPearl(worldIn, playerIn); //func_184538_a
       entityenderpearl.setHeadingFromThrower(playerIn, playerIn.rotationPitch, playerIn.rotationYaw, 0.0F, 1.5F, 1.0F);
-      worldIn.spawnEntityInWorld(entityenderpearl);
+      worldIn.spawnEntity(entityenderpearl);
       if (orbType == OrbType.MOUNTED) {
         playerIn.dismountRidingEntity();
         playerIn.startRiding(entityenderpearl);
@@ -45,7 +47,7 @@ public class ItemToolPearlReuse extends BaseTool implements IHasRecipe {
     return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemStackIn);
   }
   @Override
-  public void addRecipe() {
+  public IRecipe addRecipe() {
     switch (orbType) {
       case MOUNTED:
         GameRegistry.addShapedRecipe(new ItemStack(this),
@@ -53,7 +55,7 @@ public class ItemToolPearlReuse extends BaseTool implements IHasRecipe {
             "rsr",
             "ere",
             'e', new ItemStack(Items.ENDER_EYE),
-            'r', new ItemStack(Items.DYE,1,EnumDyeColor.BLUE.getDyeDamage()),
+            'r', new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage()),
             's', new ItemStack(Blocks.IRON_BLOCK));
       break;
       case NORMAL:
@@ -68,6 +70,7 @@ public class ItemToolPearlReuse extends BaseTool implements IHasRecipe {
       default:
       break;
     }
+    return null;
   }
   @SideOnly(Side.CLIENT)
   public boolean hasEffect(ItemStack stack) {

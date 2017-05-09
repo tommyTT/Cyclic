@@ -9,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -25,8 +26,9 @@ public class ItemToolSpelunker extends BaseTool implements IHasRecipe, IHasConfi
     super(DURABILITY);
   }
   @Override
-  public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World worldObj, BlockPos posIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    if (side == null || posIn == null) { return super.onItemUse(stack, player, worldObj, posIn, hand, side, hitX, hitY, hitZ); }
+  public EnumActionResult onItemUse(EntityPlayer player, World worldObj, BlockPos posIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    ItemStack stack = player.getHeldItem(hand);
+    if (side == null || posIn == null) { return super.onItemUse(player, worldObj, posIn, hand, side, hitX, hitY, hitZ); }
     //    boolean showOdds = player.isSneaking();
     boolean found = false;
     if (!worldObj.isRemote) {
@@ -59,11 +61,11 @@ public class ItemToolSpelunker extends BaseTool implements IHasRecipe, IHasConfi
     }
     player.getCooldownTracker().setCooldown(this, COOLDOWN);
     super.onUse(stack, player, worldObj, hand);
-    return super.onItemUse(stack, player, worldObj, posIn, hand, side, hitX, hitY, hitZ);
+    return super.onItemUse(player, worldObj, posIn, hand, side, hitX, hitY, hitZ);
   }
   @Override
-  public void addRecipe() {
-    GameRegistry.addShapedRecipe(new ItemStack(this),
+  public IRecipe addRecipe() {
+    return GameRegistry.addShapedRecipe(new ItemStack(this),
         " sg",
         " bs",
         "b  ",

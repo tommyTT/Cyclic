@@ -7,8 +7,8 @@ import com.lothrazar.cyclicmagic.registry.PermissionRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockStone;
-import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.block.BlockStone.EnumType;
+import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -79,9 +79,9 @@ public class UtilPlaceBlocks {
       world.markChunkDirty(placePos, null);
     }
     catch (ConcurrentModificationException e) {
-      ModCyclic.logger.warn("ConcurrentModificationException");
-      ModCyclic.logger.warn(e.getMessage());// message is null??
-      ModCyclic.logger.warn(e.getStackTrace().toString());
+      ModCyclic.logger.error("ConcurrentModificationException");
+      ModCyclic.logger.error(e.getMessage());// message is null??
+      ModCyclic.logger.error(e.getStackTrace().toString());
       success = false;
     }
     return success;

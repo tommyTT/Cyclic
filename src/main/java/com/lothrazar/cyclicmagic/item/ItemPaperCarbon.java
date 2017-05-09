@@ -1,6 +1,7 @@
 package com.lothrazar.cyclicmagic.item;
 import java.util.List;
 import com.lothrazar.cyclicmagic.IHasRecipe;
+import com.lothrazar.cyclicmagic.registry.RecipeRegistry;
 import com.lothrazar.cyclicmagic.registry.SoundRegistry;
 import com.lothrazar.cyclicmagic.util.UtilParticle;
 import com.lothrazar.cyclicmagic.util.UtilPlayer;
@@ -8,6 +9,7 @@ import com.lothrazar.cyclicmagic.util.UtilSound;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
@@ -20,7 +22,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ItemPaperCarbon extends BaseItem implements IHasRecipe {
   public static final String name = "carbon_paper";
@@ -102,10 +103,11 @@ public class ItemPaperCarbon extends BaseItem implements IHasRecipe {
   //onItemUse
   //	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand)
   @Override
-  public EnumActionResult onItemUseFirst(ItemStack held, EntityPlayer entityPlayer, World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, EnumHand hand) {
+  public EnumActionResult onItemUseFirst(EntityPlayer entityPlayer, World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, EnumHand hand) {
     TileEntity container = world.getTileEntity(pos);
     boolean isValid = false;
     boolean consumeItem = false;
+    ItemStack held = entityPlayer.getHeldItem(hand);
     //if(!entityPlayer.isSneaking()) { return EnumActionResult.FAIL; }
     boolean isEmpty = (held.getTagCompound() == null);
     if (container instanceof TileEntitySign) {
@@ -223,10 +225,10 @@ public class ItemPaperCarbon extends BaseItem implements IHasRecipe {
     return s;
   }
   @Override
-  public void addRecipe() {
-    GameRegistry.addRecipe(new ItemStack(this, 8), "ppp", "pcp", "ppp", 'c', new ItemStack(Items.COAL, 1, 1), // charcoal
+  public IRecipe addRecipe() {
+    RecipeRegistry.addShapelessRecipe(new ItemStack(this), new ItemStack(this));
+    return RecipeRegistry.addShapedRecipe(new ItemStack(this, 8), "ppp", "pcp", "ppp", 'c', new ItemStack(Items.COAL, 1, 1), // charcoal
         'p', Items.PAPER);
     //also let you clean off the paper , make one with no NBT
-    GameRegistry.addShapelessRecipe(new ItemStack(this), new ItemStack(this));
   }
 }

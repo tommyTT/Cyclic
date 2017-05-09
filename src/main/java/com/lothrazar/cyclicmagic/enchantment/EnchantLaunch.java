@@ -1,4 +1,7 @@
 package com.lothrazar.cyclicmagic.enchantment;
+import java.util.ArrayList;
+import java.util.Arrays;
+import com.lothrazar.cyclicmagic.registry.GuideRegistry;
 import com.lothrazar.cyclicmagic.registry.SoundRegistry;
 import com.lothrazar.cyclicmagic.util.UtilEntity;
 import com.lothrazar.cyclicmagic.util.UtilItemStack;
@@ -28,8 +31,8 @@ public class EnchantLaunch extends EnchantBase {
   private static final int cooldown = 40;
   private static final String NBT_USES = "launchuses";
   public EnchantLaunch() {
-    super(Rarity.COMMON, EnumEnchantmentType.ARMOR_FEET, new EntityEquipmentSlot[] { EntityEquipmentSlot.FEET });
-    this.setName("launch");
+    super("launch", Rarity.COMMON, EnumEnchantmentType.ARMOR_FEET, new EntityEquipmentSlot[] { EntityEquipmentSlot.FEET });
+    GuideRegistry.register(this, new ArrayList<String>(Arrays.asList(cooldown + "")));
   }
   @Override
   public int getMaxLevel() {
@@ -52,7 +55,7 @@ public class EnchantLaunch extends EnchantBase {
     if (event.getEntity() instanceof EntityPlayer) {
       EntityPlayer p = (EntityPlayer) event.getEntity();
       ItemStack feet = p.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-      if (feet == null) { return; }
+      if (feet.isEmpty()) { return; }
       //if you are on the ground (or not airborne, should be same thing
       if ((p.isAirBorne == false || p.onGround) &&
           UtilNBT.getItemStackNBTVal(feet, NBT_USES) > 0) {
@@ -64,9 +67,9 @@ public class EnchantLaunch extends EnchantBase {
   @SideOnly(Side.CLIENT)
   @SubscribeEvent
   public void onKeyInput(KeyInputEvent event) {
-    EntityPlayer p = Minecraft.getMinecraft().thePlayer;
+    EntityPlayer p = Minecraft.getMinecraft().player;
     ItemStack feet = p.getItemStackFromSlot(EntityEquipmentSlot.FEET);
-    if (feet == null) { return; }
+    if (feet.isEmpty()) { return; }
     if (FMLClientHandler.instance().getClient().gameSettings.keyBindJump.isPressed()
         && p.posY < p.lastTickPosY && p.isAirBorne && p.isInWater() == false) {
       //JUMP IS pressed and you are moving down
@@ -82,7 +85,7 @@ public class EnchantLaunch extends EnchantBase {
       uses++;
       if (uses >= level) { // level is maxuses
         //now block useage for a while
-        if (feet != null) {
+        if (!feet.isEmpty()) {
           p.getCooldownTracker().setCooldown(feet.getItem(), cooldown);
         }
         uses = 0;

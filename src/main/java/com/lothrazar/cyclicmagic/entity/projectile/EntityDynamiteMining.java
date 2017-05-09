@@ -1,17 +1,16 @@
 package com.lothrazar.cyclicmagic.entity.projectile;
-import com.lothrazar.cyclicmagic.world.ExplosionMining;
+import com.lothrazar.cyclicmagic.explosion.ExplosionMining;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 public class EntityDynamiteMining extends EntityThrowableDispensable {
-
   public static Item renderSnowball;
   private float explosionLevel;
   public EntityDynamiteMining(World worldIn) {
     super(worldIn);
-    this.explosionLevel = 6;
+    this.explosionLevel = EntityDynamite.EX_ENDCRYSTAL;
   }
   public EntityDynamiteMining(World worldIn, int explos) {
     super(worldIn);
@@ -30,7 +29,6 @@ public class EntityDynamiteMining extends EntityThrowableDispensable {
     ExplosionMining explosion = new ExplosionMining(this.getEntityWorld(), this.getThrower(), posX, posY, posZ, explosionLevel, false, true);
     explosion.doExplosionA();
     explosion.doExplosionB(false);
-
     this.setDead();
   }
 }

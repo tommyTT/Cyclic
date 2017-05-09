@@ -1,6 +1,6 @@
 package com.lothrazar.cyclicmagic.item.gear;
 import java.util.List;
-import com.lothrazar.cyclicmagic.ICanToggleOnOff;
+import com.lothrazar.cyclicmagic.IHasClickToggle;
 import com.lothrazar.cyclicmagic.IHasRecipe;
 import com.lothrazar.cyclicmagic.util.Const;
 import com.lothrazar.cyclicmagic.util.UtilChat;
@@ -16,6 +16,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -25,7 +26,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 @SuppressWarnings("incomplete-switch")
-public class ItemPowerArmor extends ItemArmor implements IHasRecipe, ICanToggleOnOff {
+public class ItemPowerArmor extends ItemArmor implements IHasRecipe, IHasClickToggle {
   private static final float SNEAKSPEED = 0.077F;
   public static final String NBT_GLOW = Const.MODID + "_glow";
   public static final String NBT_STEP = Const.MODID + "_step";
@@ -47,7 +48,7 @@ public class ItemPowerArmor extends ItemArmor implements IHasRecipe, ICanToggleO
       break;
       case HEAD:
         setGlowing(player, isTurnedOn);
-        if(isTurnedOn)
+        if (isTurnedOn)
           setNightVision(player);
       break;
       case LEGS:
@@ -103,39 +104,36 @@ public class ItemPowerArmor extends ItemArmor implements IHasRecipe, ICanToggleO
     list.add(UtilChat.lang("item.cantoggle.tooltip.info") + UtilChat.lang("item.cantoggle.tooltip." + onoff));
   }
   @Override
-  public void addRecipe() {
+  public IRecipe addRecipe() {
     switch (this.armorType) {
       case CHEST:
-        GameRegistry.addShapedRecipe(new ItemStack(this),
+        return GameRegistry.addShapedRecipe(new ItemStack(this),
             "p p", "oio", "ooo",
             'i', new ItemStack(Items.CHAINMAIL_CHESTPLATE, 1, OreDictionary.WILDCARD_VALUE),
             'o', Blocks.OBSIDIAN,
             'p', new ItemStack(Items.DYE, 1, EnumDyeColor.PURPLE.getDyeDamage()));
-      break;
       case FEET:
-        GameRegistry.addShapedRecipe(new ItemStack(this),
+        return GameRegistry.addShapedRecipe(new ItemStack(this),
             "   ", "p p", "oio",
             'i', new ItemStack(Items.CHAINMAIL_BOOTS, 1, OreDictionary.WILDCARD_VALUE),
             'o', Blocks.OBSIDIAN,
             'p', new ItemStack(Items.DYE, 1, EnumDyeColor.PURPLE.getDyeDamage()));
-      break;
       case HEAD:
-        GameRegistry.addShapedRecipe(new ItemStack(this),
+        return GameRegistry.addShapedRecipe(new ItemStack(this),
             "oio", "p p", "   ",
             'i', new ItemStack(Items.CHAINMAIL_HELMET, 1, OreDictionary.WILDCARD_VALUE),
             'o', Blocks.OBSIDIAN,
             'p', new ItemStack(Items.DYE, 1, EnumDyeColor.PURPLE.getDyeDamage()));
-      break;
       case LEGS:
-        GameRegistry.addShapedRecipe(new ItemStack(this),
+        return GameRegistry.addShapedRecipe(new ItemStack(this),
             "oio", "p p", "o o",
             'i', new ItemStack(Items.CHAINMAIL_LEGGINGS, 1, OreDictionary.WILDCARD_VALUE),
             'o', Blocks.OBSIDIAN,
             'p', new ItemStack(Items.DYE, 1, EnumDyeColor.PURPLE.getDyeDamage()));
-      break;
     }
+    return null;
   }
-  public void toggleOnOff(ItemStack held) {
+  public void toggle(EntityPlayer player, ItemStack held) {
     NBTTagCompound tags = UtilNBT.getItemStackNBT(held);
     int vnew = isOn(held) ? 0 : 1;
     tags.setInteger(NBT_STATUS, vnew);

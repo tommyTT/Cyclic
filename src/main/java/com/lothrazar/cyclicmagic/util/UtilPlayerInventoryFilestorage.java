@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import com.google.common.io.Files;
 import com.lothrazar.cyclicmagic.ModCyclic;
-import com.lothrazar.cyclicmagic.gui.player.InventoryPlayerExtended;
+import com.lothrazar.cyclicmagic.component.playerextensions.InventoryPlayerExtended;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -61,7 +61,7 @@ public class UtilPlayerInventoryFilestorage {
   }
   public static void setPlayerInventoryStack(EntityPlayer player, int slot, ItemStack itemStack) {
     //    UtilPlayerInventoryFilestorage.getPlayerInventory(player).setInventorySlotContents(slot, itemStack);
-    getPlayerInventory(player).stackList[slot] = itemStack;
+    getPlayerInventory(player).inv.set(slot, itemStack);
   }
   public static void setPlayerInventory(EntityPlayer player, InventoryPlayerExtended inventory) {
     playerItems.put(player.getDisplayNameString(), inventory);
@@ -82,7 +82,7 @@ public class UtilPlayerInventoryFilestorage {
           }
         }
         if (file1 == null || !file1.exists() || data == null || data.hasNoTags()) {
-          ModCyclic.logger.warn("Data not found for " + player.getDisplayNameString() + ". Trying to load backup data.");
+          ModCyclic.logger.error("Data not found for " + player.getDisplayNameString() + ". Trying to load backup data.");
           if (file2 != null && file2.exists()) {
             try {
               FileInputStream fileinputstream = new FileInputStream(file2);
@@ -164,6 +164,6 @@ public class UtilPlayerInventoryFilestorage {
     }
   }
   public static void putDataIntoInventory(InventoryPlayerExtended inventory, EntityPlayer player) {
-    inventory.stackList = getPlayerInventory(player).stackList;
+    inventory.inv = getPlayerInventory(player).inv;
   }
 }

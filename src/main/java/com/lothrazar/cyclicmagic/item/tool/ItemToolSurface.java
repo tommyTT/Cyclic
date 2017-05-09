@@ -10,6 +10,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -35,8 +36,8 @@ public class ItemToolSurface extends BaseTool implements IHasRecipe {
     return false;
   }
   @Override
-  public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-    //    world.getTopSolidOrLiquidBlock(pos)
+  public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    ItemStack stack = player.getHeldItem(hand);
     BlockPos dest = UtilWorld.getFirstBlockAbove(world, player.getPosition());
     if (dest != null) {
       UtilSound.playSound(player, SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT);
@@ -48,8 +49,8 @@ public class ItemToolSurface extends BaseTool implements IHasRecipe {
     return new ActionResult<ItemStack>(EnumActionResult.FAIL, stack);
   }
   @Override
-  public void addRecipe() {
-    GameRegistry.addRecipe(new ItemStack(this),
+  public IRecipe addRecipe() {
+    return GameRegistry.addShapedRecipe(new ItemStack(this),
         " de",
         " gd",
         "s  ",

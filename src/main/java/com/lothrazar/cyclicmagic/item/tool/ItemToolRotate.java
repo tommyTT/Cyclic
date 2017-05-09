@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -22,7 +23,8 @@ public class ItemToolRotate extends BaseTool implements IHasRecipe {
     super(durability);
   }
   @Override
-  public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World worldObj, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+  public EnumActionResult onItemUse(EntityPlayer player, World worldObj, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    ItemStack stack = player.getHeldItem(hand);
     //    UtilPlaceBlocks.rotateBlockValidState(worldObj, player, pos, side);
     if (worldObj.isRemote) {
       ModCyclic.network.sendToServer(new PacketMoveBlock(pos, ItemToolPiston.ActionType.ROTATE, side));
@@ -36,7 +38,7 @@ public class ItemToolRotate extends BaseTool implements IHasRecipe {
     return EnumActionResult.SUCCESS;
   }
   @Override
-  public void addRecipe() {
+  public IRecipe addRecipe() {
     GameRegistry.addRecipe(new ItemStack(this),
         " gp",
         " bg",
@@ -44,5 +46,6 @@ public class ItemToolRotate extends BaseTool implements IHasRecipe {
         'b', Items.STICK,
         'g', Blocks.STONE_SLAB,
         'p', Blocks.STONE_BRICK_STAIRS);
+    return null;
   }
 }

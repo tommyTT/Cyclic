@@ -1,11 +1,13 @@
 package com.lothrazar.cyclicmagic.event;
-import com.lothrazar.cyclicmagic.gui.player.ButtonTabToggleCrafting;
-import com.lothrazar.cyclicmagic.gui.player.ButtonTabToggleInventory;
-import com.lothrazar.cyclicmagic.gui.player.GuiPlayerExtended;
-import com.lothrazar.cyclicmagic.gui.playerworkbench.GuiPlayerExtWorkbench;
+import java.util.ArrayList;
+import com.lothrazar.cyclicmagic.component.playerextensions.ButtonTabToggleCrafting;
+import com.lothrazar.cyclicmagic.component.playerextensions.ButtonTabToggleInventory;
+import com.lothrazar.cyclicmagic.component.playerextensions.GuiPlayerExtWorkbench;
+import com.lothrazar.cyclicmagic.component.playerextensions.GuiPlayerExtended;
 import com.lothrazar.cyclicmagic.registry.CapabilityRegistry;
 import com.lothrazar.cyclicmagic.registry.CapabilityRegistry.IPlayerExtendedProperties;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.gui.inventory.GuiScreenHorseInventory;
@@ -32,10 +34,13 @@ public class EventGuiInvoButtons {
       int guiTop = (gui.height - ySize) / 2;
       int x = 44 + guiLeft;
       int y = guiTop;
-      EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+      EntityPlayer player = Minecraft.getMinecraft().player;
       final IPlayerExtendedProperties data = CapabilityRegistry.getPlayerProperties(player);
       showInvToggle = data.hasInventoryExtended();// && !(gui instanceof GuiPlayerExtWorkbench);
       showCraftToggle = data.hasInventoryCrafting();// && !(gui instanceof GuiPlayerExtended);
+      if (event.getButtonList() == null) {
+        event.setButtonList(new ArrayList<GuiButton>());
+      }
       if (showInvToggle) {
         event.getButtonList().add(new ButtonTabToggleInventory(gui, x, y));
       }

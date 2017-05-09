@@ -18,13 +18,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraft.util.SoundEvent;
 
 public class BlockConveyor extends BlockBasePressurePlate {
   protected static final AxisAlignedBB AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1D, 0.03125D, 1D);
@@ -78,11 +78,9 @@ public class BlockConveyor extends BlockBasePressurePlate {
         double xDiff = (pos.getX() + 0.5) - entity.posX;
         if (Math.abs(xDiff) > 0.09) {//max is .5
           if (xDiff < 0) {
-            //                        System.out.println("WEST" + xDiff);
             UtilEntity.launchDirection(entity, ANGLE, powerCorrection, EnumFacing.WEST);
           }
           else {
-            //                        System.out.println("EAST" + xDiff);
             UtilEntity.launchDirection(entity, ANGLE, powerCorrection, EnumFacing.EAST);
           }
         }
@@ -93,11 +91,9 @@ public class BlockConveyor extends BlockBasePressurePlate {
         //??NOPE  &&  ((int) entity.posZ) == entity.getPosition().getZ()
         if (Math.abs(diff) > 0.09) {//max is .5
           if (diff < 0) {
-            //                        System.out.println("NORTH" + diff);
             UtilEntity.launchDirection(entity, ANGLE, powerCorrection, EnumFacing.NORTH);
           }
           else {
-            //                        System.out.println("SOUTH" + diff);
             UtilEntity.launchDirection(entity, ANGLE, powerCorrection, EnumFacing.SOUTH);
           }
         }
@@ -128,7 +124,7 @@ public class BlockConveyor extends BlockBasePressurePlate {
     return new BlockStateContainer(this, new IProperty[] { PROPERTYFACING });
   }
   @Override
-  public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+  public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
     // find the quadrant the player is facing
     EnumFacing enumfacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
     return this.getDefaultState().withProperty(PROPERTYFACING, enumfacing);

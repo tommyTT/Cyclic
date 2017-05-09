@@ -1,4 +1,7 @@
 package com.lothrazar.cyclicmagic.enchantment;
+import java.util.ArrayList;
+import java.util.Arrays;
+import com.lothrazar.cyclicmagic.registry.GuideRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,10 +16,10 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class EnchantXpBoost extends EnchantBase {
-  private static final int XP_PER_LVL = 4;
+  private static final int XP_PER_LVL = 16;
   public EnchantXpBoost() {
-    super(Rarity.VERY_RARE, EnumEnchantmentType.DIGGER, new EntityEquipmentSlot[] { EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.OFFHAND });
-    this.setName("expboost");
+    super("expboost", Rarity.VERY_RARE, EnumEnchantmentType.DIGGER, new EntityEquipmentSlot[] { EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.OFFHAND });
+    GuideRegistry.register(this, new ArrayList<String>(Arrays.asList(XP_PER_LVL + "")));
   }
   @Override
   public int getMaxLevel() {
@@ -24,8 +27,7 @@ public class EnchantXpBoost extends EnchantBase {
   }
   @SubscribeEvent
   public void onEntityKill(LivingDeathEvent event) {
-
-    if(event.getSource() == null){return;}
+    if (event.getSource() == null) { return; }
     if (event.getSource().getSourceOfDamage() instanceof EntityPlayer && event.getEntity() instanceof EntityLivingBase) {
       EntityPlayer attacker = (EntityPlayer) event.getSource().getSourceOfDamage();
       int level = getCurrentLevelTool(attacker);
@@ -33,14 +35,14 @@ public class EnchantXpBoost extends EnchantBase {
       EntityLivingBase target = (EntityLivingBase) event.getEntity();
       World world = attacker.getEntityWorld();
       BlockPos pos = target.getPosition();
-      dropExp(world, pos, XP_PER_LVL * XP_PER_LVL * level);
+      dropExp(world, pos, XP_PER_LVL * level);
     }
   }
   @SubscribeEvent(priority = EventPriority.LOWEST)
   public void onBreakEvent(BreakEvent event) {
     World world = event.getWorld();
     EntityPlayer player = event.getPlayer();
-    if(player == null){return;}
+    if (player == null) { return; }
     BlockPos pos = event.getPos();
     int level = this.getCurrentLevelTool(player);
     if (level <= 0) { return; }
@@ -53,7 +55,7 @@ public class EnchantXpBoost extends EnchantBase {
       EntityXPOrb orb = new EntityXPOrb(world);
       orb.setPositionAndUpdate(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
       orb.xpValue = xp;
-      world.spawnEntityInWorld(orb);
+      world.spawnEntity(orb);
     }
   }
 }

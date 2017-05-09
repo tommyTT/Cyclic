@@ -4,6 +4,7 @@ import com.lothrazar.cyclicmagic.IHasConfig;
 import com.lothrazar.cyclicmagic.util.Const;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockSand;
+import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityVillager.EmeraldForItems;
 import net.minecraft.entity.passive.EntityVillager.PriceInfo;
@@ -104,7 +105,7 @@ public class VillagerCreateModule extends BaseModule implements IHasConfig {
   public void syncConfig(Configuration c) {
     String category = Const.ConfigCategory.villagers;
     c.addCustomCategoryComment(category, "Two new villagers with more trades");
-    extraVillagersEnabled = c.getBoolean("More Trades", category, true, "Adds more  villager types (Sage and Druid) with more trades such as gunpowder, blaze rods, beef, spider eyes, and more.  Spawn naturally and from mob eggs. ");
+    extraVillagersEnabled = c.getBoolean("SageAndDruidVillagers", category, true, "Adds more  villager types (Sage and Druid) with more trades such as gunpowder, blaze rods, beef, spider eyes, and more.  Spawn naturally and from mob eggs. ");
   }
   /**
    * replace ListItemForEmeralds, instead of extending it just like
@@ -160,5 +161,7 @@ public class VillagerCreateModule extends BaseModule implements IHasConfig {
       }
       recipeList.add(new MerchantRecipe(itemstack, itemstack1));
     }
+    @Override
+    public void addMerchantRecipe(IMerchant merchant, MerchantRecipeList recipeList, Random random) {}
   }
 }

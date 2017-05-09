@@ -8,6 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -24,11 +25,12 @@ public class ItemToolThrowTorch extends BaseTool implements IHasRecipe {
     super(256);
   }
   @Override
-  public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+  public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    ItemStack stack = player.getHeldItem(hand);
     if (world.isRemote == false) {
       EntityTorchBolt thing = new EntityTorchBolt(world, player);
       thing.setHeadingFromThrower(player, player.rotationPitch, player.rotationYaw, PITCHOFFSET, VELOCITY_DEFAULT, INACCURACY_DEFAULT);
-      world.spawnEntityInWorld(thing);
+      world.spawnEntity(thing);
     }
     UtilSound.playSound(player, player.getPosition(), SoundEvents.ENTITY_EGG_THROW, SoundCategory.PLAYERS);
     player.getCooldownTracker().setCooldown(this, COOLDOWN);
@@ -36,7 +38,7 @@ public class ItemToolThrowTorch extends BaseTool implements IHasRecipe {
     return new ActionResult<ItemStack>(EnumActionResult.PASS, stack);
   }
   @Override
-  public void addRecipe() {
+  public IRecipe addRecipe() {
     GameRegistry.addRecipe(new ItemStack(this),
         " gi",
         " ig",
@@ -44,5 +46,6 @@ public class ItemToolThrowTorch extends BaseTool implements IHasRecipe {
         'i', Items.IRON_INGOT,
         'g', Items.GOLD_INGOT,
         'o', Blocks.OBSIDIAN);
+    return null;
   }
 }

@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
@@ -77,6 +78,7 @@ public class ItemAutoTorch extends BaseItem implements IHasRecipe {
       return type == OFF.ordinal();
     }
   }
+  @Override
   public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) {
     ActionType.tickTimeout(stack);
     if (ActionType.isOff(stack)) { return; }
@@ -90,9 +92,9 @@ public class ItemAutoTorch extends BaseItem implements IHasRecipe {
           && world.isAirBlock(pos)) { // dont overwrite liquids 
         if (UtilPlaceBlocks.placeStateSafe(world, living, pos, Blocks.TORCH.getDefaultState())) {
           UtilItemStack.damageItem(living, stack);
-          if (stack == null || stack.getItemDamage() == stack.getMaxDamage()) {
-            stack = null;
-            living.inventory.setInventorySlotContents(itemSlot, null);
+          if (stack.isEmpty() || stack.getItemDamage() == stack.getMaxDamage()) {
+            stack = ItemStack.EMPTY;
+            living.inventory.setInventorySlotContents(itemSlot, stack);
             UtilSound.playSound(living, living.getPosition(), SoundEvents.ENTITY_ITEM_BREAK, living.getSoundCategory());
           }
           living.getCooldownTracker().setCooldown(this, cooldown);
@@ -123,8 +125,8 @@ public class ItemAutoTorch extends BaseItem implements IHasRecipe {
     super.addInformation(stack, playerIn, tooltip, advanced);
   }
   @Override
-  public void addRecipe() {
-    GameRegistry.addRecipe(new ItemStack(this),
+  public IRecipe addRecipe() {
+    return GameRegistry.addShapedRecipe(new ItemStack(this),
         "cic",
         " i ",
         "cic",

@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.lothrazar.cyclicmagic.ModCyclic;
 import com.lothrazar.cyclicmagic.net.PacketPlayerFalldamage;
-import com.lothrazar.cyclicmagic.registry.ReflectionRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
@@ -19,6 +18,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 public class UtilEntity {
   private static final double ENTITY_PULL_DIST = 0.4;//closer than this and nothing happens
@@ -216,10 +216,10 @@ public class UtilEntity {
     entity.motionX += net.minecraft.util.math.MathHelper.sin(-entity.rotationYaw * 0.017453292F) * factor;
     entity.motionZ += net.minecraft.util.math.MathHelper.cos(entity.rotationYaw * 0.017453292F) * factor;
   }
-  public static int moveEntityLivingNonplayers(World world, double x, double y, double z, int ITEM_HRADIUS, int ITEM_VRADIUS, boolean towardsPos) {
+  public static int moveEntityLivingNonplayers(World world, double x, double y, double z, int ITEM_HRADIUS, int ITEM_VRADIUS, boolean towardsPos, float speed) {
     AxisAlignedBB range = UtilEntity.makeBoundingBox(x, y, z, ITEM_HRADIUS, ITEM_VRADIUS);
     List<EntityLivingBase> nonPlayer = getLivingHostile(world, range);
-    return pullEntityList(x, y, z, towardsPos, nonPlayer);
+    return pullEntityList(x, y, z, towardsPos, nonPlayer, speed, speed);
   }
   public static List<EntityLivingBase> getLivingHostile(World world, AxisAlignedBB range) {
     List<EntityLivingBase> all = world.getEntitiesWithinAABB(EntityLivingBase.class, range);
@@ -322,17 +322,11 @@ public class UtilEntity {
       return all.get(0);
   }
   public static int getVillagerCareer(EntityVillager merchant) {
-    try {
-      return ReflectionRegistry.fieldCareer.getInt(merchant);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-    }
-    return -1;
+    return ObfuscationReflectionHelper.getPrivateValue(EntityVillager.class, merchant, "careerId", "field_175563_bv");
   }
-  //  public static VillagerCareer getCareerName(EntityVillager villager,int maybeC) {
-  //    return villager.getProfessionForge().getCareer(maybeC);
-  //  }
+  public static void setVillagerCareer(EntityVillager merchant, int c) {
+    ObfuscationReflectionHelper.setPrivateValue(EntityVillager.class, merchant, c, "careerId", "field_175563_bv");
+  }
   public static String getCareerName(EntityVillager merchant) {
     return merchant.getDisplayName().getFormattedText();//getProfessionForge().getCareer(maybeC).getName();
   }

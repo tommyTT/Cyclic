@@ -34,10 +34,10 @@ public class EntityMagicNetFull extends EntityThrowableDispensable {
     if (spawnEntity != null) {
       spawnEntity.readFromNBT(captured.getTagCompound());
       spawnEntity.setLocationAndAngles(this.posX, this.posY + 1.1F, this.posZ, this.rotationYaw, 0.0F);
-      this.getEntityWorld().spawnEntityInWorld(spawnEntity);
-      if(spawnEntity instanceof EntityLivingBase)
-        UtilSound.playSound((EntityLivingBase)spawnEntity, SoundRegistry.byeaa);
-     //todo; could drop an empty one ? nah. consumed on use
+      this.getEntityWorld().spawnEntity(spawnEntity);
+      if (spawnEntity instanceof EntityLivingBase)
+        UtilSound.playSound((EntityLivingBase) spawnEntity, SoundRegistry.byeaa);
+      //todo; could drop an empty one ? nah. consumed on use
     }
     this.setDead();
   }

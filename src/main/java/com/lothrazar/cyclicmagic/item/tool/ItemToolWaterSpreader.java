@@ -9,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -26,17 +27,19 @@ public class ItemToolWaterSpreader extends BaseTool implements IHasRecipe {
     super(DURABILITY);
   }
   @Override
-  public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    if (pos == null) { return super.onItemUse(stack, player, world, pos, hand, side, hitX, hitY, hitZ); }
+  public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    ItemStack stack = player.getHeldItem(hand);
+    if (pos == null) { return super.onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ); }
     if (side != null) {
       pos = pos.offset(side);
     }
     if (spreadWaterFromCenter(world, player, pos))
       super.onUse(stack, player, world, hand);
-    return super.onItemUse(stack, player, world, pos, hand, side, hitX, hitY, hitZ);
+    return super.onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
   }
   @Override
-  public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+  public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    ItemStack stack = player.getHeldItem(hand);
     if (spreadWaterFromCenter(world, player, player.getPosition()))
       super.onUse(stack, player, world, hand);
     return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
@@ -57,8 +60,8 @@ public class ItemToolWaterSpreader extends BaseTool implements IHasRecipe {
     return success;
   }
   @Override
-  public void addRecipe() {
-    GameRegistry.addShapedRecipe(new ItemStack(this),
+  public IRecipe addRecipe() {
+    return GameRegistry.addShapedRecipe(new ItemStack(this),
         "wdw",
         "iwi",
         " o ",

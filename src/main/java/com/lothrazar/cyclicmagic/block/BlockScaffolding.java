@@ -1,6 +1,7 @@
 package com.lothrazar.cyclicmagic.block;
 import java.util.Random;
 import com.lothrazar.cyclicmagic.IHasRecipe;
+import com.lothrazar.cyclicmagic.registry.RecipeRegistry;
 import com.lothrazar.cyclicmagic.registry.SoundRegistry;
 import com.lothrazar.cyclicmagic.util.UtilEntity;
 import net.minecraft.block.SoundType;
@@ -10,12 +11,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -32,13 +34,13 @@ public class BlockScaffolding extends BlockBase implements IHasRecipe {
   private static final double OFFSET = 0.0125D;//shearing & cactus are  0.0625D;
   protected static final AxisAlignedBB AABB = new AxisAlignedBB(OFFSET, 0, OFFSET, 1 - OFFSET, 1, 1 - OFFSET);//required to make entity collied happen for ladder climbing
   protected boolean dropBlock = true;//does it drop item on non-player break
-  protected boolean doesAutobreak = true;
-  public BlockScaffolding() {
+  private boolean doesAutobreak = true;
+  public BlockScaffolding(boolean autoBreak) {
     super(Material.GLASS);
+    doesAutobreak = autoBreak;
     this.setTickRandomly(true);
     this.setHardness(0F);
     this.setResistance(0F);
-    //    this.setTranslucent();
     SoundEvent crackle = SoundRegistry.crackle;
     this.setSoundType(new SoundType(0.1F, 1.0F, crackle, crackle, crackle, crackle, crackle));
   }
@@ -55,7 +57,7 @@ public class BlockScaffolding extends BlockBase implements IHasRecipe {
     return BlockRenderLayer.CUTOUT;
   }
   @Override
-  public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+  public AxisAlignedBB getBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
     return AABB;
   }
   @Override
@@ -68,8 +70,8 @@ public class BlockScaffolding extends BlockBase implements IHasRecipe {
     return 200;
   }
   @Override
-  public void addRecipe() {
-    GameRegistry.addRecipe(new ItemStack(this, 16), "s s", " s ", "s s", 's', new ItemStack(Items.STICK));
+  public IRecipe addRecipe() {
+    return RecipeRegistry.addShapedRecipe(new ItemStack(this, 16), "s s", " s ", "s s", 's', new ItemStack(Items.STICK));
   }
   @Override
   public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {

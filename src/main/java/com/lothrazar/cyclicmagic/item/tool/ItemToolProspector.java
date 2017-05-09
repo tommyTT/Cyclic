@@ -3,7 +3,6 @@ import java.util.HashMap;
 import java.util.Map;
 import com.lothrazar.cyclicmagic.IHasConfig;
 import com.lothrazar.cyclicmagic.IHasRecipe;
-import com.lothrazar.cyclicmagic.ModCyclic;
 import com.lothrazar.cyclicmagic.item.BaseTool;
 import com.lothrazar.cyclicmagic.util.Const;
 import com.lothrazar.cyclicmagic.util.UtilChat;
@@ -16,6 +15,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -34,8 +34,9 @@ public class ItemToolProspector extends BaseTool implements IHasRecipe, IHasConf
     super(DURABILITY);
   }
   @Override
-  public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World worldObj, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-    if (side == null || pos == null) { return super.onItemUse(stack, player, worldObj, pos, hand, side, hitX, hitY, hitZ); }
+  public EnumActionResult onItemUse(EntityPlayer player, World worldObj, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    ItemStack stack = player.getHeldItem(hand);
+    if (side == null || pos == null) { return super.onItemUse(player, worldObj, pos, hand, side, hitX, hitY, hitZ); }
     Map<String, Integer> mapList = new HashMap<String, Integer>();
     String name;
     EnumFacing direction = side.getOpposite();
@@ -76,7 +77,7 @@ public class ItemToolProspector extends BaseTool implements IHasRecipe, IHasConf
     }
     player.getCooldownTracker().setCooldown(this, COOLDOWN);
     super.onUse(stack, player, worldObj, hand);
-    return super.onItemUse(stack, player, worldObj, pos, hand, side, hitX, hitY, hitZ);
+    return super.onItemUse(player, worldObj, pos, hand, side, hitX, hitY, hitZ);
   }
   public boolean isBlockShowable(ItemStack stack) {
     if (stack == null || stack.getItem() == null) { return false; } //nulls
@@ -100,8 +101,8 @@ public class ItemToolProspector extends BaseTool implements IHasRecipe, IHasConf
     return yesShowIt;
   }
   @Override
-  public void addRecipe() {
-    GameRegistry.addShapedRecipe(new ItemStack(this),
+  public IRecipe addRecipe() {
+    return GameRegistry.addShapedRecipe(new ItemStack(this),
         " sg",
         " bs",
         "b  ",

@@ -1,6 +1,7 @@
 package com.lothrazar.cyclicmagic.enchantment;
 import java.util.ArrayList;
 import java.util.List;
+import com.lothrazar.cyclicmagic.registry.GuideRegistry;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Enchantments;
@@ -12,8 +13,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class EnchantAutoSmelt extends EnchantBase {
   public EnchantAutoSmelt() {
-    super(Rarity.RARE, EnumEnchantmentType.DIGGER, new EntityEquipmentSlot[] { EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.OFFHAND });
-    this.setName("autosmelt");
+    super("autosmelt", Rarity.RARE, EnumEnchantmentType.DIGGER, new EntityEquipmentSlot[] { EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.OFFHAND });
+    GuideRegistry.register(this, new ArrayList<String>());
   }
   @Override
   public int getMaxLevel() {
@@ -25,7 +26,7 @@ public class EnchantAutoSmelt extends EnchantBase {
   }
   @SubscribeEvent()
   public void onHarvestDrops(HarvestDropsEvent event) {
-    if(event.getHarvester() == null){return;}
+    if (event.getHarvester() == null) { return; }
     int level = getCurrentLevelTool(event.getHarvester());
     if (level <= 0) { return; }
     if (event.isSilkTouching()) { return; } //it should be incompabile but check anyway ya
@@ -39,9 +40,9 @@ public class EnchantAutoSmelt extends EnchantBase {
     drops.clear();//works since byref
     for (ItemStack drop : dropsCopy) {
       ItemStack fromSmelted = FurnaceRecipes.instance().getSmeltingResult(drop);
-      if (fromSmelted != null) {
-        if (fromSmelted.stackSize == 0) { //wtf!?!?! why how does this happen? idk whatever fixed
-          fromSmelted.stackSize = 1;
+      if (fromSmelted != ItemStack.EMPTY) {
+        if (fromSmelted.getCount() == 0) { //wtf!?!?! why how does this happen? idk whatever fixed
+          fromSmelted.setCount(1);
         }
         drops.add(fromSmelted);//smelt it up yo!
       }

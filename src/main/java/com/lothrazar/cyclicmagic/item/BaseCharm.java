@@ -1,6 +1,6 @@
 package com.lothrazar.cyclicmagic.item;
 import java.util.List;
-import com.lothrazar.cyclicmagic.ICanToggleOnOff;
+import com.lothrazar.cyclicmagic.IHasClickToggle;
 import com.lothrazar.cyclicmagic.util.UtilChat;
 import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import com.lothrazar.cyclicmagic.util.UtilNBT;
@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -16,14 +17,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
-@Optional.Interface(iface = "baubles.api.IBauble", modid = "Baubles", striprefs = true)
-public abstract class BaseCharm extends BaseItem implements baubles.api.IBauble, ICanToggleOnOff {
+@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles", striprefs = true)
+public abstract class BaseCharm extends BaseItem implements baubles.api.IBauble, IHasClickToggle {
   private final static String NBT_STATUS = "onoff";
   public BaseCharm(int durability) {
     this.setMaxStackSize(1);
     this.setMaxDamage(durability);
   }
-  public void toggleOnOff(ItemStack held) {
+  public void toggle(EntityPlayer player, ItemStack held) {
     NBTTagCompound tags = UtilNBT.getItemStackNBT(held);
     int vnew = isOn(held) ? 0 : 1;
     tags.setInteger(NBT_STATUS, vnew);
@@ -44,11 +45,12 @@ public abstract class BaseCharm extends BaseItem implements baubles.api.IBauble,
   public void damageCharm(EntityPlayer living, ItemStack stack) {
     UtilItemStack.damageItem(living, stack);
   }
-  public void addRecipeAndRepair(Item craftItem) {
-    this.addRecipeAndRepair(new ItemStack(craftItem));
+  public IRecipe addRecipeAndRepair(Item craftItem) {
+    return this.addRecipeAndRepair(new ItemStack(craftItem));
   }
-  public void addRecipeAndRepair(ItemStack craftItem) {
-    GameRegistry.addRecipe(new ItemStack(this),
+  public IRecipe addRecipeAndRepair(ItemStack craftItem) {
+    GameRegistry.addShapelessRecipe(new ItemStack(this), new ItemStack(this, 1, OreDictionary.WILDCARD_VALUE), craftItem);
+    return GameRegistry.addShapedRecipe(new ItemStack(this),
         "r x",
         "id ",
         "iir",
@@ -56,7 +58,6 @@ public abstract class BaseCharm extends BaseItem implements baubles.api.IBauble,
         'd', Items.DIAMOND,
         'r', Items.NETHER_WART,
         'i', Items.IRON_INGOT);
-    GameRegistry.addShapelessRecipe(new ItemStack(this), new ItemStack(this, 1, OreDictionary.WILDCARD_VALUE), craftItem);
   }
   /**
    * Fires while in inventory OR while in bauble slot
@@ -65,15 +66,15 @@ public abstract class BaseCharm extends BaseItem implements baubles.api.IBauble,
    * @param arg1
    */
   public abstract void onTick(ItemStack arg0, EntityPlayer arg1);
-  @Optional.Method(modid = "Baubles")
+  @Optional.Method(modid = "baubles")
   public boolean canEquip(ItemStack arg0, EntityLivingBase arg1) {
     return true;
   }
-  @Optional.Method(modid = "Baubles")
+  @Optional.Method(modid = "baubles")
   public boolean canUnequip(ItemStack arg0, EntityLivingBase arg1) {
     return true;
   }
-  @Optional.Method(modid = "Baubles")
+  @Optional.Method(modid = "baubles")
   public baubles.api.BaubleType getBaubleType(ItemStack arg0) {
     try {
       if (baubles.api.BaubleType.values().length >= 4) { //length is 4 if trinket exists
@@ -87,14 +88,14 @@ public abstract class BaseCharm extends BaseItem implements baubles.api.IBauble,
       return baubles.api.BaubleType.RING;
     }
   }
-  @Optional.Method(modid = "Baubles")
+  @Optional.Method(modid = "baubles")
   public void onEquipped(ItemStack arg0, EntityLivingBase arg1) {}
-  @Optional.Method(modid = "Baubles")
+  @Optional.Method(modid = "baubles")
   public void onUnequipped(ItemStack arg0, EntityLivingBase arg1) {}
-  @Optional.Method(modid = "Baubles")
+  @Optional.Method(modid = "baubles")
   public void onWornTick(ItemStack stack, EntityLivingBase arg1) {
     if (!this.canTick(stack)) { return; }
-    if (arg1 instanceof EntityPlayer && stack != null && stack.stackSize > 0) {
+    if (arg1 instanceof EntityPlayer && stack != null && stack.getCount() > 0) {
       this.onTick(stack, (EntityPlayer) arg1);
     }
   }

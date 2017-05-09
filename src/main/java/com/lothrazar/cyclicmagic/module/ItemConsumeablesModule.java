@@ -1,12 +1,13 @@
 package com.lothrazar.cyclicmagic.module;
 import com.lothrazar.cyclicmagic.IHasConfig;
 import com.lothrazar.cyclicmagic.ModCyclic;
+import com.lothrazar.cyclicmagic.component.playerextensions.ItemFoodCrafting;
+import com.lothrazar.cyclicmagic.component.playerextensions.ItemFoodInventory;
 import com.lothrazar.cyclicmagic.item.food.ItemAppleEmerald;
+import com.lothrazar.cyclicmagic.item.food.ItemAppleLapis;
 import com.lothrazar.cyclicmagic.item.food.ItemFoodChorusCorrupted;
-import com.lothrazar.cyclicmagic.item.food.ItemFoodCrafting;
 import com.lothrazar.cyclicmagic.item.food.ItemFoodChorusGlowing;
 import com.lothrazar.cyclicmagic.item.food.ItemFoodHeart;
-import com.lothrazar.cyclicmagic.item.food.ItemFoodInventory;
 import com.lothrazar.cyclicmagic.item.food.ItemHorseUpgrade;
 import com.lothrazar.cyclicmagic.item.food.ItemHorseUpgrade.HorseUpgradeType;
 import com.lothrazar.cyclicmagic.registry.AchievementRegistry;
@@ -14,7 +15,7 @@ import com.lothrazar.cyclicmagic.registry.ItemRegistry;
 import com.lothrazar.cyclicmagic.registry.LootTableRegistry;
 import com.lothrazar.cyclicmagic.registry.LootTableRegistry.ChestType;
 import com.lothrazar.cyclicmagic.util.Const;
-import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.AbstractHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -32,19 +33,20 @@ public class ItemConsumeablesModule extends BaseEventModule implements IHasConfi
   private boolean enableCorruptedChorus;
   private boolean enableHorseFoodUpgrades;
   private boolean enableGlowingChorus;
+  private boolean enableLapisApple;
   @Override
-  public void onInit() {
+  public void onPreInit() {
     if (enableHorseFoodUpgrades) {
       Item emerald_carrot = new ItemHorseUpgrade(HorseUpgradeType.TYPE, new ItemStack(Items.EMERALD));
       Item lapis_carrot = new ItemHorseUpgrade(HorseUpgradeType.VARIANT, new ItemStack(Items.DYE, 1, EnumDyeColor.BLUE.getDyeDamage()));
       Item diamond_carrot = new ItemHorseUpgrade(HorseUpgradeType.HEALTH, new ItemStack(Items.DIAMOND));
       Item redstone_carrot = new ItemHorseUpgrade(HorseUpgradeType.SPEED, new ItemStack(Items.REDSTONE));
       Item ender_carrot = new ItemHorseUpgrade(HorseUpgradeType.JUMP, new ItemStack(Items.ENDER_EYE));
-      ItemRegistry.addItem(emerald_carrot, "horse_upgrade_type");
-      ItemRegistry.addItem(lapis_carrot, "horse_upgrade_variant");
-      ItemRegistry.addItem(diamond_carrot, "horse_upgrade_health");
-      ItemRegistry.addItem(redstone_carrot, "horse_upgrade_speed");
-      ItemRegistry.addItem(ender_carrot, "horse_upgrade_jump");
+      ItemRegistry.register(emerald_carrot, "horse_upgrade_type");
+      ItemRegistry.register(lapis_carrot, "horse_upgrade_variant");
+      ItemRegistry.register(diamond_carrot, "horse_upgrade_health");
+      ItemRegistry.register(redstone_carrot, "horse_upgrade_speed");
+      ItemRegistry.register(ender_carrot, "horse_upgrade_jump");
       ModCyclic.instance.events.register(this);//for SubcribeEvent hooks
       LootTableRegistry.registerLoot(diamond_carrot);
       AchievementRegistry.registerItemAchievement(diamond_carrot);
@@ -54,15 +56,21 @@ public class ItemConsumeablesModule extends BaseEventModule implements IHasConfi
       ItemRegistry.registerWithJeiDescription(redstone_carrot);
       ItemRegistry.registerWithJeiDescription(ender_carrot);
     }
+    if (enableLapisApple) {
+      ItemAppleLapis apple_lapis = new ItemAppleLapis();
+      ItemRegistry.register(apple_lapis, "apple_lapis");
+      ModCyclic.instance.events.register(apple_lapis);
+    }
     if (enableEmeraldApple) {
       ItemAppleEmerald apple_emerald = new ItemAppleEmerald();
-      ItemRegistry.addItem(apple_emerald, "apple_emerald");
+      ItemRegistry.register(apple_emerald, "apple_emerald");
       LootTableRegistry.registerLoot(apple_emerald);
       ItemRegistry.registerWithJeiDescription(apple_emerald);
+      ModCyclic.instance.events.register(apple_emerald);
     }
     if (enableHeartContainer) {
       ItemFoodHeart heart_food = new ItemFoodHeart();
-      ItemRegistry.addItem(heart_food, "heart_food");
+      ItemRegistry.register(heart_food, "heart_food");
       ModCyclic.instance.events.register(heart_food);
       LootTableRegistry.registerLoot(heart_food);
       LootTableRegistry.registerLoot(heart_food, ChestType.ENDCITY);
@@ -71,21 +79,21 @@ public class ItemConsumeablesModule extends BaseEventModule implements IHasConfi
     }
     if (enableInventoryCrafting) {
       ItemFoodCrafting crafting_food = new ItemFoodCrafting();
-      ItemRegistry.addItem(crafting_food, "crafting_food");
+      ItemRegistry.register(crafting_food, "crafting_food");
       LootTableRegistry.registerLoot(crafting_food);
       AchievementRegistry.registerItemAchievement(crafting_food);
       ItemRegistry.registerWithJeiDescription(crafting_food);
     }
     if (enableInventoryUpgrade) {
       ItemFoodInventory inventory_food = new ItemFoodInventory();
-      ItemRegistry.addItem(inventory_food, "inventory_food");
+      ItemRegistry.register(inventory_food, "inventory_food");
       LootTableRegistry.registerLoot(inventory_food);
       AchievementRegistry.registerItemAchievement(inventory_food);
       ItemRegistry.registerWithJeiDescription(inventory_food);
     }
     if (enableCorruptedChorus) {
       ItemFoodChorusCorrupted corrupted_chorus = new ItemFoodChorusCorrupted();
-      ItemRegistry.addItem(corrupted_chorus, "corrupted_chorus");
+      ItemRegistry.register(corrupted_chorus, "corrupted_chorus");
       ModCyclic.instance.events.register(corrupted_chorus);
       LootTableRegistry.registerLoot(corrupted_chorus);
       LootTableRegistry.registerLoot(corrupted_chorus, ChestType.ENDCITY);
@@ -94,7 +102,7 @@ public class ItemConsumeablesModule extends BaseEventModule implements IHasConfi
     }
     if (enableGlowingChorus) {
       ItemFoodChorusGlowing glowing_chorus = new ItemFoodChorusGlowing();
-      ItemRegistry.addItem(glowing_chorus, "glowing_chorus");
+      ItemRegistry.register(glowing_chorus, "glowing_chorus");
       ModCyclic.instance.events.register(glowing_chorus);
     }
   }
@@ -103,14 +111,15 @@ public class ItemConsumeablesModule extends BaseEventModule implements IHasConfi
     if (event.getEntity() instanceof EntityPlayer == false) { return; }
     EntityPlayer entityPlayer = (EntityPlayer) event.getEntity();
     ItemStack held = entityPlayer.getHeldItemMainhand();
-    if (held != null && held.getItem() instanceof ItemHorseUpgrade && held.stackSize > 0
-        && event.getTarget() instanceof EntityHorse) {
-      ItemHorseUpgrade.onHorseInteract((EntityHorse) event.getTarget(), entityPlayer, held, (ItemHorseUpgrade) held.getItem());
+    if (held != null && held.getItem() instanceof ItemHorseUpgrade && held.getCount() > 0
+        && event.getTarget() instanceof AbstractHorse) {
+      ItemHorseUpgrade.onHorseInteract((AbstractHorse) event.getTarget(), entityPlayer, held, (ItemHorseUpgrade) held.getItem());
       event.setCanceled(true);// stop the GUI inventory opening && horse mounting
     }
   }
   @Override
   public void syncConfig(Configuration config) {
+    enableLapisApple = config.getBoolean("LapisApple", Const.ConfigCategory.content, true, Const.ConfigCategory.contentDefaultText);
     enableGlowingChorus = config.getBoolean("GlowingChorus(Food)", Const.ConfigCategory.content, true, Const.ConfigCategory.contentDefaultText);
     enableEmeraldApple = config.getBoolean("EmeraldApple", Const.ConfigCategory.content, true, Const.ConfigCategory.contentDefaultText);
     enableHeartContainer = config.getBoolean("HeartContainer(food)", Const.ConfigCategory.content, true, Const.ConfigCategory.contentDefaultText);

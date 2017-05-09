@@ -6,6 +6,7 @@ import com.lothrazar.cyclicmagic.util.UtilHarvestCrops.HarestCropsConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -47,7 +48,8 @@ public class ItemToolHarvest extends BaseTool implements IHasRecipe {
     }
   }
   @Override
-  public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World worldObj, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+  public EnumActionResult onItemUse(EntityPlayer player, World worldObj, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+    ItemStack stack = player.getHeldItem(hand);
     BlockPos offset = pos;
     if (side != null) {
       offset = pos.offset(side);
@@ -58,40 +60,38 @@ public class ItemToolHarvest extends BaseTool implements IHasRecipe {
     UtilHarvestCrops.harvestArea(worldObj, offset.up(), range - 2, conf);
     UtilHarvestCrops.harvestArea(worldObj, offset.up().up(), range - 2, conf);
     super.onUse(stack, player, worldObj, hand);
-    return super.onItemUse(stack, player, worldObj, offset, hand, side, hitX, hitY, hitZ);
+    return super.onItemUse(player, worldObj, offset, hand, side, hitX, hitY, hitZ);
   }
   @Override
-  public void addRecipe() {
+  public IRecipe addRecipe() {
     switch (harvestType) {
       case CROPS:
-        GameRegistry.addRecipe(new ItemStack(this),
+        return GameRegistry.addShapedRecipe(new ItemStack(this),
             " gs",
             " bg",
             "b  ",
             'b', Items.BLAZE_ROD,
             'g', Items.QUARTZ,
             's', Items.STONE_HOE);
-      break;
       case LEAVES:
-        GameRegistry.addRecipe(new ItemStack(this),
+        return GameRegistry.addShapedRecipe(new ItemStack(this),
             " gs",
             " bg",
             "b  ",
             'b', Items.STICK,
             'g', Items.STRING,
             's', Items.STONE_AXE);
-      break;
       case WEEDS:
-        GameRegistry.addRecipe(new ItemStack(this),
+        return GameRegistry.addShapedRecipe(new ItemStack(this),
             " gs",
             " bg",
             "b  ",
             'b', Items.STICK,
             'g', Items.STRING,
             's', Items.STONE_HOE);
-      break;
       default:
       break;
     }
+    return null;
   }
 }

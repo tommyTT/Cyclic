@@ -7,12 +7,12 @@ import com.lothrazar.cyclicmagic.registry.CapabilityRegistry.IPlayerExtendedProp
 import com.lothrazar.cyclicmagic.util.Const;
 import com.lothrazar.cyclicmagic.util.UtilChat;
 import com.lothrazar.cyclicmagic.util.UtilEntity;
-import com.lothrazar.cyclicmagic.util.UtilNBT;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +27,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemFoodChorusCorrupted extends ItemFood implements IHasRecipe, IHasConfig {
   //revived from https://github.com/PrinceOfAmber/Cyclic/blob/d2f91d1f97b9cfba47786a30b427fbfdcd714212/src/main/java/com/lothrazar/cyclicmagic/spell/SpellGhost.java
-
   public static int GHOST_SECONDS = 5;
   public static int POTION_SECONDS = 20;
   private static final int numFood = 2;
@@ -44,8 +43,8 @@ public class ItemFoodChorusCorrupted extends ItemFood implements IHasRecipe, IHa
     tooltips.add(UtilChat.lang(this.getUnlocalizedName() + ".tooltip"));
   }
   @Override
-  public void addRecipe() {
-    GameRegistry.addRecipe(new ItemStack(this, 3),
+  public IRecipe addRecipe() {
+    return GameRegistry.addShapedRecipe(new ItemStack(this, 3),
         "lal", "lal", "lal",
         'l', Items.FERMENTED_SPIDER_EYE,
         'a', Items.CHORUS_FRUIT);
@@ -60,18 +59,14 @@ public class ItemFoodChorusCorrupted extends ItemFood implements IHasRecipe, IHa
     if (par2World.isRemote == false) {
       player.setGameType(GameType.SPECTATOR);
       IPlayerExtendedProperties props = CapabilityRegistry.getPlayerProperties(player);
-      
-      
-      props.setChorusTimer( GHOST_SECONDS * Const.TICKS_PER_SEC);
-      
+      props.setChorusTimer(GHOST_SECONDS * Const.TICKS_PER_SEC);
       props.setChorusOn(true);
       props.setChorusStart(player.getPosition());
       props.setChorusDim(player.dimension);
-      
-//      UtilNBT.incrementPlayerIntegerNBT(player, KEY_TIMER, GHOST_SECONDS * Const.TICKS_PER_SEC);
-//      player.getEntityData().setBoolean(KEY_BOOLEAN, true);
-//      player.getEntityData().setString(KEY_EATLOC, UtilNBT.posToStringCSV(player.getPosition()));
-//      player.getEntityData().setInteger(KEY_EATDIM, player.dimension);
+      //      UtilNBT.incrementPlayerIntegerNBT(player, KEY_TIMER, GHOST_SECONDS * Const.TICKS_PER_SEC);
+      //      player.getEntityData().setBoolean(KEY_BOOLEAN, true);
+      //      player.getEntityData().setString(KEY_EATLOC, UtilNBT.posToStringCSV(player.getPosition()));
+      //      player.getEntityData().setInteger(KEY_EATDIM, player.dimension);
     }
   }
   @SubscribeEvent
@@ -80,7 +75,6 @@ public class ItemFoodChorusCorrupted extends ItemFood implements IHasRecipe, IHa
     EntityPlayer player = (EntityPlayer) event.getEntityLiving();
     World world = player.getEntityWorld();
     IPlayerExtendedProperties props = CapabilityRegistry.getPlayerProperties(player);
-    
     if (props.getChorusOn()) {
       int playerGhost = props.getChorusTimer();
       if (playerGhost > 0) {
@@ -93,18 +87,17 @@ public class ItemFoodChorusCorrupted extends ItemFood implements IHasRecipe, IHa
       else {
         //times up!
         props.setChorusOn(false);
-//        player.getEntityData().setBoolean(KEY_BOOLEAN, false);
-      
-        if (  props.getChorusDim() != player.dimension) {
+        //        player.getEntityData().setBoolean(KEY_BOOLEAN, false);
+        if (props.getChorusDim() != player.dimension) {
           // if the player changed dimension while a ghost, thats not
           // allowed. dont tp them back
           player.setGameType(GameType.SURVIVAL);
-          player.attackEntityFrom(DamageSource.magic, 50);
+          player.attackEntityFrom(DamageSource.MAGIC, 50);
         }
         else {
           // : teleport back to source
-//          String posCSV = player.getEntityData().getString(KEY_EATLOC);
-//          String[] p = posCSV.split(",");
+          //          String posCSV = player.getEntityData().getString(KEY_EATLOC);
+          //          String[] p = posCSV.split(",");
           BlockPos currentPos = player.getPosition();
           BlockPos sourcePos = props.getChorusStart();//new BlockPos(Double.parseDouble(p[0]), Double.parseDouble(p[1]), Double.parseDouble(p[2]));
           if (world.isAirBlock(currentPos) && world.isAirBlock(currentPos.up())) {
