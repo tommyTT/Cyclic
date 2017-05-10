@@ -122,11 +122,11 @@ public class TileEntityControlledMiner extends TileEntityBaseMachineInvo impleme
   }
   private void tryEquipItem() {
     ItemStack equip = this.getStackInSlot(TOOLSLOT_INDEX);
-    if (equip.getCount() == 0) {
-      this.setInventorySlotContents(TOOLSLOT_INDEX, ItemStack.EMPTY);
+    if (equip.stackSize == 0) {
+      this.setInventorySlotContents(TOOLSLOT_INDEX, UtilItemStack.EMPTY);
     }
-    if (equip == ItemStack.EMPTY) {
-      fakePlayer.get().setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+    if (equip == UtilItemStack.EMPTY) {
+      fakePlayer.get().setHeldItem(EnumHand.MAIN_HAND, UtilItemStack.EMPTY);
     }
     else if (!equip.equals(fakePlayer.get().getHeldItem(EnumHand.MAIN_HAND))) {
       fakePlayer.get().setHeldItem(EnumHand.MAIN_HAND, equip);
@@ -149,10 +149,10 @@ public class TileEntityControlledMiner extends TileEntityBaseMachineInvo impleme
     int listSize = this.getSizeInventory() - 1;
     if (this.blacklistIfZero == 0) {
       for (int i = 0; i < listSize; i++) {//minus 1 because of TOOL
-        if (inv.get(i) == ItemStack.EMPTY) {
+        if (this.getStackInSlot(i) == UtilItemStack.EMPTY) {
           continue;
         }
-        itemStack = inv.get(i);
+        itemStack = this.getStackInSlot(i);
         if (itemStack.getItem() == Item.getItemFromBlock(target)) { return false; }
       }
       return true;//blacklist means default trie
@@ -160,11 +160,11 @@ public class TileEntityControlledMiner extends TileEntityBaseMachineInvo impleme
     else {//check it as a WHITELIST
       int countEmpty = 0;
       for (int i = 0; i < listSize; i++) {//minus 1 because of TOOL
-        if (inv.get(i) == ItemStack.EMPTY) {
+        if (this.getStackInSlot(i) == UtilItemStack.EMPTY) {
           countEmpty++;
           continue;
         }
-        itemStack = inv.get(i);
+        itemStack = this.getStackInSlot(i);
         //its a whitelist, so if its found in the list, its good to go right away
         //        ModCyclic.logger.info("checkingWhitelist... ? "+itemStack);
         //        ModCyclic.logger.info(" Block.getBlockFromItem(item.getItem())... ? "+ Block.getBlockFromItem(itemStack.getItem()));

@@ -240,7 +240,7 @@ public class TileEntityStructureBuilder extends TileEntityBaseMachineInvo implem
     this.spawnParticlesAbove();
     World world = getWorld();
     ItemStack stack = getStackInSlot(0);
-    if (stack != ItemStack.EMPTY) {
+    if (stack != UtilItemStack.EMPTY) {
       timer -= this.getSpeed();
       if (timer <= 0) {
         timer = TIMER_FULL;
@@ -260,7 +260,7 @@ public class TileEntityStructureBuilder extends TileEntityBaseMachineInvo implem
           //true means bounding box is null in the check. entit falling sand uses true
           if (world.isAirBlock(nextPos) &&
               stuff.canPlaceBlockAt(world, nextPos) &&
-              world.mayPlace(stuff, nextPos, true, EnumFacing.UP, null)) { // check if this spot is even valid
+              world.canBlockBePlaced(stuff, nextPos, true, EnumFacing.UP, null,stack)) { // check if this spot is even valid
             IBlockState placeState = UtilItemStack.getStateFromMeta(stuff, stack.getMetadata());
             if (world.isRemote == false && world.isAirBlock(nextPos) && UtilPlaceBlocks.placeStateSafe(world, null, nextPos, placeState)) {
               this.decrStackSize(0, 1);

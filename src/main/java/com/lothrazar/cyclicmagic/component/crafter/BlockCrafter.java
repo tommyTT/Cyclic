@@ -29,7 +29,7 @@ public class BlockCrafter extends BlockBaseFacingInventory implements IHasRecipe
         "y x",
         "pkp",
         'k', new ItemStack(Blocks.BONE_BLOCK),
-        'x', new ItemStack(Blocks.OBSERVER),
+        'x', new ItemStack(Blocks.DISPENSER),
         'y', new ItemStack(Blocks.PISTON),
         'c', new ItemStack(Blocks.CRAFTING_TABLE),
         'p', new ItemStack(Items.DYE, 1, EnumDyeColor.PURPLE.getDyeDamage()));

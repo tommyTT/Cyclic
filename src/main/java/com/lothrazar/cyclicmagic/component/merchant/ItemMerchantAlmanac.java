@@ -22,7 +22,8 @@ public class ItemMerchantAlmanac extends BaseItem implements IHasRecipe {
     this.setMaxStackSize(1);
   }
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+  public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn,World world, EntityPlayer player, EnumHand hand) {
+ 
     BlockPos p = player.getPosition();
     if (world.isRemote == false) {
       player.openGui(ModCyclic.instance, ModGuiHandler.GUI_INDEX_VILLAGER, world, p.getX(), p.getY(), p.getZ());

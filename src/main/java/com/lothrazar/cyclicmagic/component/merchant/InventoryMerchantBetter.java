@@ -1,5 +1,6 @@
 package com.lothrazar.cyclicmagic.component.merchant;
 import javax.annotation.Nullable;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -15,7 +16,7 @@ import net.minecraft.village.MerchantRecipeList;
 
 public class InventoryMerchantBetter extends InventoryMerchant implements IInventory {
   private final IMerchant theMerchant;
-  private final NonNullList<ItemStack> inv = NonNullList.withSize(3, ItemStack.EMPTY);
+  private final ItemStack[] inv =new ItemStack[3];//, ItemStack.EMPTY);
   private final EntityPlayer thePlayer;
   private MerchantRecipe currentRecipe;
   private int currentRecipeIndex;
@@ -30,17 +31,17 @@ public class InventoryMerchantBetter extends InventoryMerchant implements IInven
    * Returns the number of slots in the inventory.
    */
   public int getSizeInventory() {
-    return this.inv.size();
+    return this.inv.length;
   }
   /**
    * Returns the stack in the given slot.
    */
   @Nullable
   public ItemStack getStackInSlot(int index) {
-    return this.inv.get(index);
+    return this.inv[index];
   }
   public ItemStack decrStackSize(int index, int count) {
-    ItemStack itemstack = (ItemStack) this.inv.get(index);
+    ItemStack itemstack = (ItemStack) this.getStackInSlot(index);
     if (index == 2 && !itemstack.isEmpty()) {
       return ItemStackHelper.getAndSplit(this.inv, index, itemstack.getCount());
     }
@@ -60,8 +61,8 @@ public class InventoryMerchantBetter extends InventoryMerchant implements IInven
     return ItemStackHelper.getAndRemove(this.inv, index);
   }
   public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
-    if (index > inv.size()) { return; }
-    this.inv.set(index, stack);
+    if (index > this.getSizeInventory()) { return; }
+    this.inv[index]= stack;
     //    if (stack != null && stack.getCount() > this.getInventoryStackLimit()) {
     //      stack = this.getInventoryStackLimit();
     //    }
@@ -102,14 +103,14 @@ public class InventoryMerchantBetter extends InventoryMerchant implements IInven
   }
   public void resetRecipeAndSlots() {
     this.currentRecipe = null;
-    ItemStack itemstack = this.inv.get(0);
-    ItemStack itemstack1 = this.inv.get(1);
-    if (itemstack == ItemStack.EMPTY) {
+    ItemStack itemstack = this.getStackInSlot(0);
+    ItemStack itemstack1 = this.getStackInSlot(1);
+    if (itemstack == UtilItemStack.EMPTY) {
       itemstack = itemstack1;
-      itemstack1 = ItemStack.EMPTY;
+      itemstack1 = UtilItemStack.EMPTY;
     }
-    if (itemstack == ItemStack.EMPTY) {
-      this.setInventorySlotContents(2, ItemStack.EMPTY);
+    if (itemstack == UtilItemStack.EMPTY) {
+      this.setInventorySlotContents(2, UtilItemStack.EMPTY);
     }
     else {
       MerchantRecipeList merchantrecipelist = this.getRecipes();
@@ -119,18 +120,18 @@ public class InventoryMerchantBetter extends InventoryMerchant implements IInven
           this.currentRecipe = merchantrecipe;
           this.setInventorySlotContents(2, merchantrecipe.getItemToSell().copy());
         }
-        else if (itemstack1 != ItemStack.EMPTY) {
+        else if (itemstack1 != UtilItemStack.EMPTY) {
           merchantrecipe = merchantrecipelist.canRecipeBeUsed(itemstack1, itemstack, this.currentRecipeIndex);
           if (merchantrecipe != null && !merchantrecipe.isRecipeDisabled()) {
             this.currentRecipe = merchantrecipe;
             this.setInventorySlotContents(2, merchantrecipe.getItemToSell().copy());
           }
           else {
-            this.setInventorySlotContents(2, ItemStack.EMPTY);
+            this.setInventorySlotContents(2, UtilItemStack.EMPTY);
           }
         }
         else {
-          this.setInventorySlotContents(2, ItemStack.EMPTY);
+          this.setInventorySlotContents(2, UtilItemStack.EMPTY);
         }
       }
     }
@@ -151,8 +152,8 @@ public class InventoryMerchantBetter extends InventoryMerchant implements IInven
     return 0;
   }
   public void clear() {
-    for (int i = 0; i < this.inv.size(); ++i) {
-      this.inv.set(i, ItemStack.EMPTY);
+    for (int i = 0; i < this.getSizeInventory(); ++i) {
+      this.inv[i]= UtilItemStack.EMPTY;
     }
   }
 }

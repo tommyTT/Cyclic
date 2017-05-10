@@ -12,7 +12,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 
@@ -47,13 +46,13 @@ public class InventoryWand extends InventoryBase implements IInventory {
   }
   @Override
   public ItemStack getStackInSlot(int index) {
-    return inv.get(index);
+    return inv[index];
   }
   @Override
   public ItemStack decrStackSize(int slot, int amount) {
     ItemStack stack = getStackInSlot(slot);
-    if (stack != ItemStack.EMPTY) {
-      if (stack.getCount() > amount) {
+    if (stack != UtilItemStack.EMPTY) {
+      if (stack.stackSize > amount) {
         stack = stack.splitStack(amount);
         // Don't forget this line or your inventory will not be saved!
         markDirty();
@@ -61,7 +60,7 @@ public class InventoryWand extends InventoryBase implements IInventory {
       else {
         // this method also calls onInventoryChanged, so we don't need
         // to call it again
-        setInventorySlotContents(slot, ItemStack.EMPTY);
+        setInventorySlotContents(slot, UtilItemStack.EMPTY);
       }
     }
     return stack;
@@ -70,14 +69,14 @@ public class InventoryWand extends InventoryBase implements IInventory {
   public ItemStack removeStackFromSlot(int index) {
     // used to be 'getStackInSlotOnClosing'
     ItemStack stack = getStackInSlot(index);
-    setInventorySlotContents(index, ItemStack.EMPTY);
+    setInventorySlotContents(index, UtilItemStack.EMPTY);
     return stack;
   }
   @Override
   public void setInventorySlotContents(int slot, ItemStack stack) {
-    inv.set(slot, stack);
-    if (stack != ItemStack.EMPTY && stack.getCount() > getInventoryStackLimit()) {
-      stack.setCount(getInventoryStackLimit());
+    inv[slot]=stack;
+    if (stack != UtilItemStack.EMPTY && stack.stackSize > getInventoryStackLimit()) {
+      stack.stackSize=(getInventoryStackLimit());
     }
     markDirty();
   }
@@ -88,14 +87,15 @@ public class InventoryWand extends InventoryBase implements IInventory {
   @Override
   public void markDirty() {
     for (int i = 0; i < getSizeInventory(); ++i) {
-      if (getStackInSlot(i) != ItemStack.EMPTY && getStackInSlot(i).getCount() == 0) {
-        inv.set(i, ItemStack.EMPTY);
+      if (getStackInSlot(i) != UtilItemStack.EMPTY && getStackInSlot(i).stackSize == 0) {
+        this.setInventorySlotContents(i, UtilItemStack.EMPTY);
+ 
       }
     }
     // set any empty item stacks (red zeroes) to empty
     for (int i = 0; i < thePlayer.inventory.getSizeInventory(); i++) {
-      if (thePlayer.inventory.getStackInSlot(i) != ItemStack.EMPTY && thePlayer.inventory.getStackInSlot(i).getCount() == 0) {
-        thePlayer.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+      if (thePlayer.inventory.getStackInSlot(i) != UtilItemStack.EMPTY && thePlayer.inventory.getStackInSlot(i).stackSize == 0) {
+        thePlayer.inventory.setInventorySlotContents(i, UtilItemStack.EMPTY);
       }
     }
     writeToNBT(internalWand, inv);
@@ -110,9 +110,9 @@ public class InventoryWand extends InventoryBase implements IInventory {
     return !(stack.getItem() instanceof ItemCyclicWand) && Block.getBlockFromItem(stack.getItem()) != Blocks.AIR;
   }
   /************** public static ******************/
-  public static NonNullList<ItemStack> readFromNBT(ItemStack stack) {
-    NonNullList<ItemStack> inv = NonNullList.withSize(INV_SIZE, ItemStack.EMPTY);
-    if (stack.isEmpty() || (stack.getItem() instanceof ItemCyclicWand) == false) { return inv; }
+  public static ItemStack[] readFromNBT(ItemStack stack) {
+    ItemStack[]inv = new ItemStack[INV_SIZE];//, UtilItemStack.EMPTY);
+    if (stack==UtilItemStack.EMPTY || (stack.getItem() instanceof ItemCyclicWand) == false) { return inv; }
     if (!stack.hasTagCompound()) {
       stack.setTagCompound(new NBTTagCompound());
     }
@@ -122,22 +122,23 @@ public class InventoryWand extends InventoryBase implements IInventory {
       NBTTagCompound item = (NBTTagCompound) items.getCompoundTagAt(i);
       int slot = item.getInteger("Slot");
       if (slot >= 0 && slot < INV_SIZE) {
-        inv.set(slot, UtilNBT.itemFromNBT(item));
+       
+        inv[slot]= UtilNBT.itemFromNBT(item);
       }
     }
     return inv;
   }
-  public static void writeToNBT(ItemStack wandStack, NonNullList<ItemStack> theInventory) {
+  public static void writeToNBT(ItemStack wandStack,     ItemStack[] theInventory) {
     NBTTagCompound tagcompound = wandStack.getTagCompound();
     // Create a new NBT Tag List to store itemstacks as NBT Tags
     NBTTagList items = new NBTTagList();
     ItemStack stack;
-    for (int i = 0; i < theInventory.size(); ++i) {
-      stack = theInventory.get(i);
-      if (stack != ItemStack.EMPTY && stack.getCount() == 0) {
-        stack = ItemStack.EMPTY;
+    for (int i = 0; i < theInventory.length; ++i) {
+      stack = theInventory[i];
+      if (stack != UtilItemStack.EMPTY && stack.stackSize == 0) {
+        stack = UtilItemStack.EMPTY;
       }
-      if (stack != ItemStack.EMPTY) {
+      if (stack != UtilItemStack.EMPTY) {
         // Make a new NBT Tag Compound to write the itemstack and slot
         // index to
         NBTTagCompound itemTags = new NBTTagCompound();
@@ -154,18 +155,17 @@ public class InventoryWand extends InventoryBase implements IInventory {
     tagcompound.setTag("ItemInventory", items);
   }
   public static void decrementSlot(ItemStack wand, int itemSlot) {
-    NonNullList<ItemStack> invv = InventoryWand.readFromNBT(wand);
-    //    invv[itemSlot].stackSize--;
-    invv.get(itemSlot).shrink(1);
-    //    invv[itemSlot].setCount(invv[itemSlot].getCount()-1);
-    //    if (invv[itemSlot].getCount() == 0) {
-    //      invv[itemSlot] = ItemStack.EMPTY;
-    //    }
+    ItemStack[] invv = InventoryWand.readFromNBT(wand);
+   invv[itemSlot].stackSize--;
+ 
+        if (invv[itemSlot].stackSize == 0) {
+          invv[itemSlot] = UtilItemStack.EMPTY;
+        }
     InventoryWand.writeToNBT(wand, invv);
   }
   public static ItemStack getFromSlot(ItemStack wand, int i) {
-    if (i < 0 || i >= InventoryWand.INV_SIZE) { return ItemStack.EMPTY; }
-    return InventoryWand.readFromNBT(wand).get(i);
+    if (i < 0 || i >= InventoryWand.INV_SIZE) { return UtilItemStack.EMPTY; }
+    return InventoryWand.readFromNBT(wand)[i];
   }
   public static IBlockState getToPlaceFromSlot(ItemStack wand, int i) {
     ItemStack toPlace = getFromSlot(wand, i);
@@ -175,16 +175,16 @@ public class InventoryWand extends InventoryBase implements IInventory {
     }
     return null;
   }
-  private static boolean isSlotEmpty(NonNullList<ItemStack> inv, int i) {
-    ItemStack s = inv.get(i);
+  private static boolean isSlotEmpty(ItemStack[] inv, int i) {
+    ItemStack s = inv[i];
     return s == null || s.getItem() == null || Block.getBlockFromItem(s.getItem()) == Blocks.AIR;
   }
   public static int calculateSlotCurrent(ItemStack wand) {
     int itemSlot = ItemCyclicWand.BuildType.getSlot(wand);
     int buildType = ItemCyclicWand.BuildType.get(wand);
-    NonNullList<ItemStack> inv = InventoryWand.readFromNBT(wand);
+    ItemStack[] inv = InventoryWand.readFromNBT(wand);
     ArrayList<Integer> slotNonEmpty = new ArrayList<Integer>();
-    for (int i = 0; i < inv.size(); i++) {
+    for (int i = 0; i < inv.length; i++) {
       if (!isSlotEmpty(inv, i)) {
         slotNonEmpty.add(i);
       }
@@ -193,11 +193,11 @@ public class InventoryWand extends InventoryBase implements IInventory {
     // brute forcing it. there is surely a more elegant way in each branch
     if (buildType == ItemCyclicWand.BuildType.FIRST.ordinal()) {
       //special rules: if my current slot is not empty; DONT MOVE
-      if (inv.get(itemSlot) == ItemStack.EMPTY) {
+      if (inv[itemSlot] == UtilItemStack.EMPTY) {
         //test every empty slot, and jump up to the next nonempty one. 
         // used for mode rotate always, and mode normal IF current is empty
         for (int trySlot : slotNonEmpty) {
-          if (inv.get(trySlot) != ItemStack.EMPTY) {
+          if (inv[trySlot] != UtilItemStack.EMPTY) {
             itemSlot = trySlot;
             break;
           }
@@ -207,7 +207,7 @@ public class InventoryWand extends InventoryBase implements IInventory {
     else if (buildType == ItemCyclicWand.BuildType.ROTATE.ordinal()) {
       //first we start itemSlot and go up
       boolean found = false;
-      for (int i = itemSlot + 1; i < inv.size(); i++) {
+      for (int i = itemSlot + 1; i < inv.length; i++) {
         if (!isSlotEmpty(inv, i)) {
           itemSlot = i;
           found = true;
@@ -246,7 +246,7 @@ public class InventoryWand extends InventoryBase implements IInventory {
   public void closeInventory(EntityPlayer player) {
     //called on gui close
     int slot = ItemCyclicWand.BuildType.getSlot(internalWand);
-    if (InventoryWand.getFromSlot(internalWand, slot) == ItemStack.EMPTY || InventoryWand.getToPlaceFromSlot(internalWand, slot) == null) {
+    if (InventoryWand.getFromSlot(internalWand, slot) == UtilItemStack.EMPTY || InventoryWand.getToPlaceFromSlot(internalWand, slot) == null) {
       //try to move away from empty slot
       ItemCyclicWand.BuildType.setNextSlot(internalWand);
     }
@@ -271,5 +271,10 @@ public class InventoryWand extends InventoryBase implements IInventory {
   @Override
   public boolean isUsableByPlayer(EntityPlayer player) {
     return true;
+  }
+  @Override
+  public boolean isUseableByPlayer(EntityPlayer player) {
+    // TODO Auto-generated method stub
+    return false;
   }
 }

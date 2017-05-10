@@ -162,11 +162,11 @@ public class TileEntityFishing extends TileEntityBaseMachineInvo implements ITic
   }
   private void tryAddToInventory(ItemStack itemstack) {
     for (int i = RODSLOT; i <= FISHSLOTS; i++) {
-      if (itemstack != ItemStack.EMPTY && itemstack.getMaxStackSize() != 0) {
+      if (itemstack != UtilItemStack.EMPTY && itemstack.getMaxStackSize() != 0) {
         itemstack = tryMergeStackIntoSlot(itemstack, i);
       }
     }
-    if (itemstack != ItemStack.EMPTY && itemstack.getMaxStackSize() != 0) { //FULL
+    if (itemstack != UtilItemStack.EMPTY && itemstack.getMaxStackSize() != 0) { //FULL
       UtilItemStack.dropItemStackInWorld(this.getWorld(), this.pos.down(), itemstack);
     }
   }
@@ -181,22 +181,22 @@ public class TileEntityFishing extends TileEntityBaseMachineInvo implements ITic
   }
   private void attemptRepairTool() {
     ItemStack equip = this.getStackInSlot(toolSlot);
-    if (equip != ItemStack.EMPTY && equip.getItemDamage() > 0) {//if it has zero damage, its fully repaired already
+    if (equip != UtilItemStack.EMPTY && equip.getItemDamage() > 0) {//if it has zero damage, its fully repaired already
       equip.setItemDamage(equip.getItemDamage() - 1);//repair by one point
     }
   }
   private void damageTool() {
     ItemStack equip = this.getStackInSlot(toolSlot);
-    if (equip != ItemStack.EMPTY) {
+    if (equip != UtilItemStack.EMPTY) {
       equip.attemptDamageItem(1, getWorld().rand);//does respect unbreaking
       //IF enchanted and IF about to break, then spit it out
       int damageRem = equip.getMaxDamage() - equip.getItemDamage();
       if (damageRem == 1 && EnchantmentHelper.getEnchantments(equip).size() > 0) {
         tryAddToInventory(equip);
-        this.setInventorySlotContents(toolSlot, ItemStack.EMPTY);
+        this.setInventorySlotContents(toolSlot, UtilItemStack.EMPTY);
       } //otherwise we also make sure if its fullly damanged
       if (equip.getItemDamage() >= equip.getMaxDamage()) {
-        this.setInventorySlotContents(toolSlot, ItemStack.EMPTY);
+        this.setInventorySlotContents(toolSlot, UtilItemStack.EMPTY);
       }
     }
   }
@@ -212,8 +212,8 @@ public class TileEntityFishing extends TileEntityBaseMachineInvo implements ITic
     for (int i = 0; i < tagList.tagCount(); i++) {
       NBTTagCompound tag = (NBTTagCompound) tagList.getCompoundTagAt(i);
       byte slot = tag.getByte(NBT_SLOT);
-      if (slot >= 0 && slot < inv.size()) {
-        inv.set(i, UtilNBT.itemFromNBT(tag));
+      if (slot >= 0 && slot < inv.length) {
+        inv[i]= UtilNBT.itemFromNBT(tag);
       }
     }
   }

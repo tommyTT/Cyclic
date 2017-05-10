@@ -12,6 +12,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class UtilItemStack {
+  public static final ItemStack EMPTY = null;
   /**
    * match item, damage, and NBT
    * 

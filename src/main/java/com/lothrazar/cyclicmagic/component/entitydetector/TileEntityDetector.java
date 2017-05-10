@@ -56,7 +56,7 @@ public class TileEntityDetector extends TileEntityBaseMachineInvo implements ITi
       isPoweredNow = trigger;
       IBlockState state = world.getBlockState(this.getPos());
       world.notifyBlockUpdate(this.getPos(), state, state, 3);
-      world.notifyNeighborsOfStateChange(this.getPos(), this.blockType, true);//bool is new in 1111
+      world.notifyNeighborsOfStateChange(this.getPos(), this.blockType);//bool is new in 1111
     }
   }
   private Class<? extends Entity> getEntityClass() {

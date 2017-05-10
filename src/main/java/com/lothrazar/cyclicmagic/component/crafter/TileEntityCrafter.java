@@ -75,7 +75,7 @@ public class TileEntityCrafter extends TileEntityBaseMachineInvo implements ITil
       //for ever i val, we must pay the cost
       thisPaid = false;
       fromRecipe = this.crafter.getStackInSlot(i);
-      if (fromRecipe.isEmpty()) {
+      if (fromRecipe==null) {
         continue;
       }
       //try to pay its cost
@@ -87,7 +87,7 @@ public class TileEntityCrafter extends TileEntityBaseMachineInvo implements ITil
             slotsToPay.put(j, 0);
           }
           //if what we are going to be pulling from this slot not more than what it contains
-          if (slotsToPay.get(j) + 1 <= fromInput.getCount()) {
+          if (slotsToPay.get(j) + 1 <= fromInput.stackSize) {
             //            ModCyclic.logger.info(" founnd slot  = " + j + " so will drain " + (slotsToPay.get(j) + 1));
             slotsToPay.put(j, slotsToPay.get(j) + 1);
             thisPaid = true;
@@ -106,12 +106,12 @@ public class TileEntityCrafter extends TileEntityBaseMachineInvo implements ITil
     //EX: stairs need 6 wood planks. This could be 6 all from one stack, or split over a few
     for (Map.Entry<Integer, Integer> entry : slotsToPay.entrySet()) {
       // if there isnt enough, in any one of these spots, stop now
-      if (entry.getValue() > this.getStackInSlot(entry.getKey()).getCount()) { return false; }
+      if (entry.getValue() > this.getStackInSlot(entry.getKey()).stackSize) { return false; }
     }
     for (Map.Entry<Integer, Integer> entry : slotsToPay.entrySet()) {
       //      ModCyclic.logger.info(" PAY cost at  = " + entry);
       //now we know there is enough everywhere. we validated
-      this.getStackInSlot(entry.getKey()).shrink(entry.getValue());
+      this.getStackInSlot(entry.getKey()).stackSize-=entry.getValue();
     }
     return true;
   }
@@ -126,7 +126,7 @@ public class TileEntityCrafter extends TileEntityBaseMachineInvo implements ITil
     }
   }
   private void findRecipe() {
-    if (this.recipe != null && recipe.matches(crafter, world)) {
+    if (this.recipe != null && recipe.matches(crafter,  this.getWorld())) {
       //recipe exists and it matches whats currently in the gui so stop now
       return;
     }
@@ -134,7 +134,7 @@ public class TileEntityCrafter extends TileEntityBaseMachineInvo implements ITil
     final List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
     for (final IRecipe rec : recipes) {
       try {
-        if (rec.getRecipeSize() <= 9 && rec.matches(this.crafter, this.world)) {
+        if (rec.getRecipeSize() <= 9 && rec.matches(this.crafter, this.getWorld())) {
           this.recipe = rec;
           return;
         }

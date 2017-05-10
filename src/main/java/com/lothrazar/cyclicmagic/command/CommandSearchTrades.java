@@ -84,19 +84,19 @@ public class CommandSearchTrades extends BaseCommand implements ICommand {
         // match to any of the three possible items
         // only match quantity if they enter one
         if (buy.getDisplayName().toLowerCase().contains(searching)) {
-          if (searchingQty < 0 || searchingQty == buy.getCount())
+          if (searchingQty < 0 || searchingQty == buy.stackSize)
             match = true;
         }
         if (buySecond != null && buySecond.getDisplayName().contains(searching)) {
-          if (searchingQty < 0 || searchingQty == buySecond.getCount())
+          if (searchingQty < 0 || searchingQty == buySecond.stackSize)
             match = true;
         }
         if (sell.getDisplayName().contains(searching)) {
-          if (searchingQty < 0 || searchingQty == sell.getCount())
+          if (searchingQty < 0 || searchingQty == sell.stackSize)
             match = true;
         }
         if (match) {
-          m = disabled + UtilChat.blockPosToString(v_entity.getPosition()) + " " + sell.getCount() + " " + sell.getDisplayName() + " :: " + buy.getCount() + " " + buy.getDisplayName();
+          m = disabled + UtilChat.blockPosToString(v_entity.getPosition()) + " " + sell.stackSize + " " + sell.getDisplayName() + " :: " + buy.stackSize + " " + buy.getDisplayName();
           messages.add(m);
           /*
            * ModCommands.spawnParticlePacketByID(((Entity)villagers.get(i)).

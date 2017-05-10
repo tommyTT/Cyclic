@@ -3,6 +3,7 @@ import javax.annotation.Nullable;
 import com.lothrazar.cyclicmagic.ModCyclic;
 import com.lothrazar.cyclicmagic.gui.ContainerBaseMachine;
 import com.lothrazar.cyclicmagic.util.UtilEntity;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -69,7 +70,7 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
   }
   @Nullable
   public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-    ItemStack itemstack = ItemStack.EMPTY;
+    ItemStack itemstack = UtilItemStack.EMPTY;
     Slot slot = (Slot) this.inventorySlots.get(index);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
@@ -82,16 +83,16 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
       //        if (!this.mergeItemStack(itemstack1, SLOT_INPUT, SLOT_INPUTX + 1, false)) { return null; }
       //      }
       //      else {//so it is 0,1
-      if (!this.mergeItemStack(itemstack1, INV_START, HOTBAR_END + 1, false)) { return ItemStack.EMPTY; }
+      if (!this.mergeItemStack(itemstack1, INV_START, HOTBAR_END + 1, false)) { return UtilItemStack.EMPTY; }
       //      }
       //cleanup steps
       if (itemstack1.getCount() == 0) {
-        slot.putStack(ItemStack.EMPTY);
+        slot.putStack(UtilItemStack.EMPTY);
       }
       else {
         slot.onSlotChanged();
       }
-      if (itemstack1.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
+      if (itemstack1.getCount() == itemstack.getCount()) { return UtilItemStack.EMPTY; }
       slot.onTake(playerIn, itemstack1);
     }
     return itemstack;
@@ -113,29 +114,29 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
     MerchantRecipe trade = getTrades().get(selectedMerchantRecipe);
     if (trade.isRecipeDisabled()) { return; }
     ItemStack itemToBuy = trade.getItemToBuy().copy();
-    ItemStack itemSecondBuy = (trade.getSecondItemToBuy() == ItemStack.EMPTY) ? ItemStack.EMPTY : trade.getSecondItemToBuy().copy();
-    ItemStack firstItem = ItemStack.EMPTY;
-    ItemStack secondItem = ItemStack.EMPTY;
+    ItemStack itemSecondBuy = (trade.getSecondItemToBuy() == UtilItemStack.EMPTY) ? UtilItemStack.EMPTY : trade.getSecondItemToBuy().copy();
+    ItemStack firstItem = UtilItemStack.EMPTY;
+    ItemStack secondItem = UtilItemStack.EMPTY;
     int firstSlot = -1, secondSlot = -1;
-    ItemStack iStack = ItemStack.EMPTY;
+    ItemStack iStack = UtilItemStack.EMPTY;
     boolean canTrade = false;
     for (int i = 0; i <= 3 * 9; i++) {
       iStack = player.inventory.getStackInSlot(i);
-      if (iStack == ItemStack.EMPTY) {
+      if (iStack == UtilItemStack.EMPTY) {
         continue;
       }
-      if (firstItem == ItemStack.EMPTY &&
+      if (firstItem == UtilItemStack.EMPTY &&
           iStack.getItem() == itemToBuy.getItem() && iStack.getCount() >= itemToBuy.getCount()) {
         firstItem = iStack;
         firstSlot = i;
       }
-      if (secondItem == ItemStack.EMPTY && itemSecondBuy != ItemStack.EMPTY) {
+      if (secondItem == UtilItemStack.EMPTY && itemSecondBuy != UtilItemStack.EMPTY) {
         if (itemSecondBuy.getItem() == iStack.getItem() && iStack.getCount() >= itemSecondBuy.getCount()) {
           secondItem = iStack;
           secondSlot = i;
         }
       }
-      canTrade = (firstItem != ItemStack.EMPTY && (itemSecondBuy == ItemStack.EMPTY || secondItem != ItemStack.EMPTY));
+      canTrade = (firstItem != UtilItemStack.EMPTY && (itemSecondBuy == UtilItemStack.EMPTY || secondItem != UtilItemStack.EMPTY));
       if (canTrade) {
         break;
       }
@@ -161,10 +162,10 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
       this.merchant.useRecipe(trade);
       player.addStat(StatList.TRADED_WITH_VILLAGER);
       if (firstItem.getCount() == 0) {
-        player.inventory.setInventorySlotContents(firstSlot, ItemStack.EMPTY);
+        player.inventory.setInventorySlotContents(firstSlot, UtilItemStack.EMPTY);
       }
       if (!secondItem.isEmpty() && secondItem.getCount() == 0) {
-        player.inventory.setInventorySlotContents(secondSlot, ItemStack.EMPTY);
+        player.inventory.setInventorySlotContents(secondSlot, UtilItemStack.EMPTY);
       }
     }
   }

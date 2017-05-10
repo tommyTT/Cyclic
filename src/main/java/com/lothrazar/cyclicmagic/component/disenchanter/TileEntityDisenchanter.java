@@ -64,23 +64,23 @@ public class TileEntityDisenchanter extends TileEntityBaseMachineInvo implements
       dropStack(input);
     }
     //currently it always drops after one enchant is removed
-    this.setInventorySlotContents(SLOT_INPUT, ItemStack.EMPTY);
+    this.setInventorySlotContents(SLOT_INPUT, UtilItemStack.EMPTY);
     //pay cost
     this.decrStackSize(SLOT_GLOWSTONE);
     this.decrStackSize(SLOT_REDSTONE);
     this.decrStackSize(SLOT_BOTTLE);
     this.decrStackSize(SLOT_BOOK);
-    UtilSound.playSound(world, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS);
+    UtilSound.playSound(getWorld(), pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS);
   }
   private void dropStack(ItemStack stack) {
     for (int i = SLOT_BOOK + 1; i < this.getSizeInventory(); i++) {
-      if (this.getStackInSlot(i).isEmpty()) {
+      if (this.getStackInSlot(i)==UtilItemStack.EMPTY) {
         this.setInventorySlotContents(i, stack);
         return;
       }
     }
     //well i guess it was full since we didnt return
-    EntityItem ei = UtilItemStack.dropItemStackInWorld(world, this.pos.up(), stack);
+    EntityItem ei = UtilItemStack.dropItemStackInWorld(getWorld(), this.pos.up(), stack);
     ei.addVelocity(0, 1, 0);
   }
   private boolean isInputValid() {
@@ -88,7 +88,7 @@ public class TileEntityDisenchanter extends TileEntityBaseMachineInvo implements
         && this.getStackInSlot(SLOT_REDSTONE).getItem() == Items.REDSTONE
         && this.getStackInSlot(SLOT_GLOWSTONE).getItem() == Items.GLOWSTONE_DUST
         && this.getStackInSlot(SLOT_BOTTLE).getItem() == Items.EXPERIENCE_BOTTLE
-        && this.getStackInSlot(SLOT_INPUT).isEmpty() == false;
+        && this.getStackInSlot(SLOT_INPUT)!=UtilItemStack.EMPTY;
   }
   @Override
   public int[] getSlotsForFace(EnumFacing side) {

@@ -4,6 +4,7 @@ import java.util.List;
 import com.lothrazar.cyclicmagic.block.BlockBase;
 import com.lothrazar.cyclicmagic.registry.BlockRegistry;
 import com.lothrazar.cyclicmagic.util.UtilChat;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import com.lothrazar.cyclicmagic.util.UtilNBT;
 import com.lothrazar.cyclicmagic.util.UtilParticle;
 import com.lothrazar.cyclicmagic.util.UtilSound;
@@ -117,10 +118,10 @@ public class BlockBucketStorage extends BlockBase implements ITileEntityProvider
     return ret;
   }
   @Override
-  public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+  public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand,ItemStack heldItem,  EnumFacing side, float hitX, float hitY, float hitZ) {
     if (hand != EnumHand.MAIN_HAND) { return false; }
     ItemStack held = entityPlayer.getHeldItem(hand);
-    if (held != ItemStack.EMPTY) { return false; }
+    if (held != UtilItemStack.EMPTY) { return false; }
     Block blockClicked = state.getBlock();
     if ((blockClicked instanceof BlockBucketStorage) == false) { return false; }
     BlockBucketStorage block = (BlockBucketStorage) blockClicked;
@@ -139,7 +140,7 @@ public class BlockBucketStorage extends BlockBase implements ITileEntityProvider
       UtilSound.playSound(world, pos, SoundEvents.BLOCK_PISTON_EXTEND, SoundCategory.BLOCKS);
       spawnMyParticle(world, block.bucketItem, pos);// .offset(face)
     }
-    return super.onBlockActivated(world, pos, state, entityPlayer, hand, side, hitX, hitY, hitZ);
+    return super.onBlockActivated(world, pos, state, entityPlayer, hand, heldItem,side, hitX, hitY, hitZ);
   }
   @Override
   public void onBlockClicked(World world, BlockPos pos, EntityPlayer entityPlayer) {
@@ -165,7 +166,7 @@ public class BlockBucketStorage extends BlockBase implements ITileEntityProvider
       UtilChat.addChatMessage(entityPlayer, new TextComponentTranslation(inside + ""));
       return;// no sounds just tell us how much
     }
-    if (held.isEmpty()) { return; }
+    if (held==null) { return; }
     // before we add the bucket, wait and should we set the block first?
     if (block.bucketItem == null) {
       IBlockState state = null;

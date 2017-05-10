@@ -10,6 +10,7 @@ import com.lothrazar.cyclicmagic.spell.BaseSpellRange;
 import com.lothrazar.cyclicmagic.spell.ISpell;
 import com.lothrazar.cyclicmagic.util.Const;
 import com.lothrazar.cyclicmagic.util.UtilChat;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import com.lothrazar.cyclicmagic.util.UtilNBT;
 import com.lothrazar.cyclicmagic.util.UtilSpellCaster;
 import net.minecraft.entity.player.EntityPlayer;
@@ -137,7 +138,7 @@ public class ItemCyclicWand extends Item implements IHasRecipe, IHasConfig {
       }
     }
     public static int get(ItemStack wand) {
-      if (wand == ItemStack.EMPTY) { return 0; }
+      if (wand == UtilItemStack.EMPTY) { return 0; }
       NBTTagCompound tags = UtilNBT.getItemStackNBT(wand);
       return tags.getInteger(NBT);
     }
@@ -151,7 +152,7 @@ public class ItemCyclicWand extends Item implements IHasRecipe, IHasConfig {
       tags.setInteger(NBT, type);
       wand.setTagCompound(tags);
       int slot = getSlot(wand);
-      if (InventoryWand.getFromSlot(wand, slot) == ItemStack.EMPTY || InventoryWand.getToPlaceFromSlot(wand, slot) == null) {
+      if (InventoryWand.getFromSlot(wand, slot) == UtilItemStack.EMPTY || InventoryWand.getToPlaceFromSlot(wand, slot) == null) {
         //try to move away from empty slot
         setNextSlot(wand);
       }

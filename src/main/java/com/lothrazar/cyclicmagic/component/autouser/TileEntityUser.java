@@ -9,12 +9,9 @@ import com.lothrazar.cyclicmagic.block.tileentity.TileEntityBaseMachineInvo;
 import com.lothrazar.cyclicmagic.util.UtilEntity;
 import com.lothrazar.cyclicmagic.util.UtilFakePlayer;
 import com.lothrazar.cyclicmagic.util.UtilItemStack;
-<<<<<<< HEAD:src/main/java/com/lothrazar/cyclicmagic/block/tileentity/TileMachineUser.java
-=======
 import com.lothrazar.cyclicmagic.util.UtilParticle;
 import com.lothrazar.cyclicmagic.util.UtilShape;
 import com.lothrazar.cyclicmagic.util.UtilWorld;
->>>>>>> 20387e5c63533fa94077cd04ad382147bc676ead:src/main/java/com/lothrazar/cyclicmagic/component/autouser/TileEntityUser.java
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -76,6 +73,7 @@ public class TileEntityUser extends TileEntityBaseMachineInvo implements ITileRe
     if (isRunning()) {
       this.spawnParticlesAbove();
     }
+    World world = this.getWorld();
     if (world instanceof WorldServer) {
       verifyUuid(world);
       if (fakePlayer == null) {
