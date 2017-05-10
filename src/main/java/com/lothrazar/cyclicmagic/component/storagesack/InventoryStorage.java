@@ -1,5 +1,6 @@
 package com.lothrazar.cyclicmagic.component.storagesack;
 import com.lothrazar.cyclicmagic.gui.InventoryBase;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import com.lothrazar.cyclicmagic.util.UtilNBT;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -71,7 +72,7 @@ public class InventoryStorage extends InventoryBase implements IInventory {
   @Override
   public void setInventorySlotContents(int slot, ItemStack stack) {
     if (stack == null) {
-      stack = ItemStack.EMPTY;
+      stack = UtilItemStack.EMPTY;
     }
     inv.set(slot, stack);
     if (!stack.isEmpty() && stack.getCount() > getInventoryStackLimit()) {
@@ -86,14 +87,14 @@ public class InventoryStorage extends InventoryBase implements IInventory {
   @Override
   public void markDirty() {
     for (int i = 0; i < getSizeInventory(); ++i) {
-      if (getStackInSlot(i) != ItemStack.EMPTY && getStackInSlot(i).getCount() == 0) {
-        inv.set(i, ItemStack.EMPTY);
+      if (getStackInSlot(i) != UtilItemStack.EMPTY && getStackInSlot(i).getCount() == 0) {
+        inv.set(i, UtilItemStack.EMPTY);
       }
     }
     // set any empty item stacks (red zeroes) to empty
     for (int i = 0; i < thePlayer.inventory.getSizeInventory(); i++) {
-      if (thePlayer.inventory.getStackInSlot(i) != ItemStack.EMPTY && thePlayer.inventory.getStackInSlot(i).getCount() == 0) {
-        thePlayer.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+      if (thePlayer.inventory.getStackInSlot(i) != UtilItemStack.EMPTY && thePlayer.inventory.getStackInSlot(i).getCount() == 0) {
+        thePlayer.inventory.setInventorySlotContents(i, UtilItemStack.EMPTY);
       }
     }
     writeToNBT(internalWand, inv);
@@ -118,8 +119,8 @@ public class InventoryStorage extends InventoryBase implements IInventory {
     return count;
   }
   public static NonNullList<ItemStack> readFromNBT(ItemStack stack) {
-    NonNullList<ItemStack> inv = NonNullList.withSize(INV_SIZE, ItemStack.EMPTY);
-    if (stack == ItemStack.EMPTY) { return inv; }
+    NonNullList<ItemStack> inv = NonNullList.withSize(INV_SIZE, UtilItemStack.EMPTY);
+    if (stack == UtilItemStack.EMPTY) { return inv; }
     NBTTagList items = UtilNBT.getItemStackNBT(stack).getTagList("ItemInventory", Constants.NBT.TAG_COMPOUND);
     for (int i = 0; i < items.tagCount(); ++i) {
       // 1.7.2+ change to items.getCompoundTagAt(i)
@@ -138,10 +139,10 @@ public class InventoryStorage extends InventoryBase implements IInventory {
     ItemStack stack;
     for (int i = 0; i < theInventory.size(); ++i) {
       stack = theInventory.get(i);
-      if (stack != ItemStack.EMPTY && stack.getCount() == 0) {
-        stack = ItemStack.EMPTY;
+      if (stack != UtilItemStack.EMPTY && stack.getCount() == 0) {
+        stack = UtilItemStack.EMPTY;
       }
-      if (stack != ItemStack.EMPTY) {
+      if (stack != UtilItemStack.EMPTY) {
         // Make a new NBT Tag Compound to write the itemstack and slot
         // index to
         NBTTagCompound itemTags = new NBTTagCompound();
@@ -163,12 +164,12 @@ public class InventoryStorage extends InventoryBase implements IInventory {
     //    invv[itemSlot].setCount(invv[itemSlot].getCount()-1);
     //    invv[itemSlot].stackSize--;
     if (invv.get(itemSlot).getCount() == 0) {
-      invv.set(itemSlot, ItemStack.EMPTY);
+      invv.set(itemSlot, UtilItemStack.EMPTY);
     }
     InventoryStorage.writeToNBT(stack, invv);
   }
   public static ItemStack getFromSlot(ItemStack stack, int i) {
-    if (i < 0 || i >= InventoryStorage.INV_SIZE) { return ItemStack.EMPTY; }
+    if (i < 0 || i >= InventoryStorage.INV_SIZE) { return UtilItemStack.EMPTY; }
     return InventoryStorage.readFromNBT(stack).get(i);
   }
 }

@@ -3,18 +3,17 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.item.ItemStack; 
 import net.minecraft.world.World;
 
 public class UtilInventoryTransfer {
   public static class BagDepositReturn {
-    public BagDepositReturn(int m, NonNullList<ItemStack> s) {
+    public BagDepositReturn(int m, ItemStack[] s) {
       moved = m;
       stacks = s;
     }
     public int moved;
-    public NonNullList<ItemStack> stacks;
+    public ItemStack[]stacks;
   }
   //TODO: this whole class is a big mess, lots of code repetition; needs work.
   public static void dumpFromPlayerToIInventory(World world, IInventory inventory, EntityPlayer player) {
@@ -28,17 +27,17 @@ public class UtilInventoryTransfer {
     // max stack size
     for (int islotInvo = start; islotInvo < inventory.getSizeInventory(); islotInvo++) {
       chestEmptySlot = inventory.getStackInSlot(islotInvo);
-      if (chestEmptySlot != ItemStack.EMPTY) {
+      if (chestEmptySlot != UtilItemStack.EMPTY) {
         continue;
       } // slot not empty, skip over it
       for (int islotPlayer = Const.HOTBAR_SIZE; islotPlayer < getInvoEnd(player); islotPlayer++) {
         playerItem = player.inventory.getStackInSlot(islotPlayer);
-        if (playerItem == ItemStack.EMPTY) {
+        if (playerItem == UtilItemStack.EMPTY) {
           continue;
         } // empty inventory slot
         //ModMain.logger.info("try dep :"+islotPlayer + "_"+playerItem.getUnlocalizedName());
         inventory.setInventorySlotContents(islotInvo, playerItem);
-        player.inventory.setInventorySlotContents(islotPlayer, ItemStack.EMPTY);
+        player.inventory.setInventorySlotContents(islotPlayer, UtilItemStack.EMPTY);
         break;
       } // close loop on player inventory items
     } // close loop on chest items
@@ -50,17 +49,17 @@ public class UtilInventoryTransfer {
     int start = 0; // dont start at zero every time
     for (int islotPlayer = Const.HOTBAR_SIZE; islotPlayer < getInvoEnd(player); islotPlayer++) {
       playerEmptySlot = player.inventory.getStackInSlot(islotPlayer);
-      if (playerEmptySlot != ItemStack.EMPTY) {
+      if (playerEmptySlot != UtilItemStack.EMPTY) {
         continue;
       } // slot not empty, skip over it
       // ok we found an empty player slot
       for (int islotInvo = start; islotInvo < inventory.getSizeInventory(); islotInvo++) {
         chestItem = inventory.getStackInSlot(islotInvo);
-        if (chestItem == ItemStack.EMPTY) {
+        if (chestItem == UtilItemStack.EMPTY) {
           continue;
         } // empty inventory slot
         player.inventory.setInventorySlotContents(islotPlayer, chestItem);
-        inventory.setInventorySlotContents(islotInvo, ItemStack.EMPTY);
+        inventory.setInventorySlotContents(islotInvo, UtilItemStack.EMPTY);
         start = islotInvo + 1;
         break;
       } // close loop on player inventory items
@@ -83,33 +82,33 @@ public class UtilInventoryTransfer {
     // max stack size
     for (int islotChest = START_CHEST; islotChest < END_CHEST; islotChest++) {
       chestItem = chest.getStackInSlot(islotChest);
-      if (chestItem == ItemStack.EMPTY) {
+      if (chestItem == UtilItemStack.EMPTY) {
         continue;
       } // empty chest slot
       for (int islotInv = Const.HOTBAR_SIZE; islotInv < getInvoEnd(player); islotInv++) {
         playerItem = player.inventory.getStackInSlot(islotInv);
-        if (playerItem == ItemStack.EMPTY) {
+        if (playerItem == UtilItemStack.EMPTY) {
           continue;
         } // empty inventory slot
         if (UtilItemStack.canMerge(playerItem, chestItem)) {
           // same item, including damage (block state)
           chestMax = chestItem.getItem().getItemStackLimit(chestItem);
-          room = chestMax - chestItem.getCount();
+          room = chestMax - chestItem.stackSize;
           if (room <= 0) {
             continue;
           } // no room, check the next spot
           // so if i have 30 room, and 28 items, i deposit 28.
           // or if i have 30 room and 38 items, i deposit 30
-          toDeposit = Math.min(playerItem.getCount(), room);
+          toDeposit = Math.min(playerItem.stackSize, room);
           chestItem.grow(toDeposit);
           chest.setInventorySlotContents(islotChest, chestItem);
           playerItem.shrink(toDeposit);
-          if (playerItem.getCount() <= 0) {// because of calculations  above, should  not be below zero
+          if (playerItem.stackSize <= 0) {// because of calculations  above, should  not be below zero
             // item stacks with zero count do not destroy
             // themselves, they show
             // up and have unexpected behavior in game so set to
             // empty
-            player.inventory.setInventorySlotContents(islotInv, ItemStack.EMPTY);
+            player.inventory.setInventorySlotContents(islotInv, UtilItemStack.EMPTY);
           }
           else {
             // set to new quantity
@@ -134,22 +133,22 @@ public class UtilInventoryTransfer {
     // max stack size
     for (int islotChest = START_CHEST; islotChest < END_CHEST; islotChest++) {
       chestItem = chest.getStackInSlot(islotChest);
-      if (chestItem == ItemStack.EMPTY) {
+      if (chestItem == UtilItemStack.EMPTY) {
         continue;
       } // empty chest slot
       for (int islotInv = Const.HOTBAR_SIZE; islotInv < getInvoEnd(player); islotInv++) {
         playerItem = player.inventory.getStackInSlot(islotInv);
-        if (playerItem == ItemStack.EMPTY) {
+        if (playerItem == UtilItemStack.EMPTY) {
           continue;
         } // empty inventory slot
         if (UtilItemStack.canMerge(playerItem, chestItem)) {
           invMax = playerItem.getItem().getItemStackLimit(playerItem);
-          room = invMax - playerItem.getCount();
+          room = invMax - playerItem.stackSize;
           if (room <= 0) {
             continue;
           } // no room, check the next spot
-          toDeposit = Math.min(chestItem.getCount(), room);
-          if (restockLeaveOne && chestItem.getCount() - toDeposit == 0) {
+          toDeposit = Math.min(chestItem.stackSize, room);
+          if (restockLeaveOne && chestItem.stackSize - toDeposit == 0) {
             // they decided in the config that leaving one behind is better
             toDeposit--;
             if (toDeposit == 0) {
@@ -157,12 +156,12 @@ public class UtilInventoryTransfer {
             } // dont do nothing
           }
           // add to player
-          playerItem.grow(toDeposit);
+          playerItem.stackSize+=(toDeposit);
           player.inventory.setInventorySlotContents(islotInv, playerItem);
           // remove from chest/invo
-          chestItem.shrink(toDeposit);
-          if (chestItem.getCount() <= 0) {
-            chest.setInventorySlotContents(islotChest, ItemStack.EMPTY);
+          chestItem.stackSize-=(toDeposit);
+          if (chestItem.stackSize <= 0) {
+            chest.setInventorySlotContents(islotChest, UtilItemStack.EMPTY);
           }
           else {
             chest.setInventorySlotContents(islotChest, chestItem);
@@ -181,55 +180,55 @@ public class UtilInventoryTransfer {
     ItemStack chestStack;
     for (ItemStack current : stacks) {
       for (int i = startingSlot; i < inventory.getSizeInventory(); i++) {
-        if (current.isEmpty()) {
+        if (current==  UtilItemStack.EMPTY) {
           continue;
         }
         chestStack = inventory.getStackInSlot(i);
-        if (chestStack.isEmpty()) {
+        if (chestStack== UtilItemStack.EMPTY) {
           inventory.setInventorySlotContents(i, current);
           // and dont add current ot remainder at all ! sweet!
-          current = ItemStack.EMPTY;
+          current = UtilItemStack.EMPTY;
         }
         else if (UtilItemStack.canMerge(chestStack, current)) {
-          int space = chestStack.getMaxStackSize() - chestStack.getCount();
-          int toDeposit = Math.min(space, current.getCount());
+          int space = chestStack.getMaxStackSize() - chestStack.stackSize;
+          int toDeposit = Math.min(space, current.stackSize);
           if (toDeposit > 0) {
-            current.shrink(toDeposit);
-            chestStack.grow(toDeposit);
-            if (current.getCount() == 0) {
-              current = ItemStack.EMPTY;
+            current.stackSize+=(toDeposit);
+            chestStack.stackSize-=(toDeposit);
+            if (current.stackSize == 0) {
+              current = UtilItemStack.EMPTY;
             }
           }
         }
       } // finished current pass over inventory
-      if (current != ItemStack.EMPTY) {
+      if (current != UtilItemStack.EMPTY) {
         remaining.add(current);
       }
     }
     return remaining;
   }
-  public static BagDepositReturn dumpFromListToIInventory(World world, IInventory chest, NonNullList<ItemStack> stacks, boolean onlyMatchingItems) {
+  public static BagDepositReturn dumpFromListToIInventory(World world, IInventory chest, ItemStack[] stacks, boolean onlyMatchingItems) {
     ItemStack chestItem;
     ItemStack bagItem;
     int room;
     int toDeposit;
     int chestMax;
     int itemsMoved = 0;
-    for (int islotStacks = 0; islotStacks < stacks.size(); islotStacks++) {
-      bagItem = stacks.get(islotStacks);
-      if (bagItem == ItemStack.EMPTY || bagItem.getCount() == 0) {
+    for (int islotStacks = 0; islotStacks < stacks.length; islotStacks++) {
+      bagItem = stacks.get[islotStacks];
+      if (bagItem == UtilItemStack.EMPTY || bagItem.stackSize == 0) {
         continue;
       }
       for (int islotChest = 0; islotChest < chest.getSizeInventory(); islotChest++) {
         chestItem = chest.getStackInSlot(islotChest);
         //we have a space in the inventory thats empty. are we allowed
-        if (chestItem == ItemStack.EMPTY && onlyMatchingItems == false) {
+        if (chestItem == UtilItemStack.EMPTY && onlyMatchingItems == false) {
           //then yeah we are allowed to use the empty space
           if (chest.isItemValidForSlot(islotStacks, bagItem)) {
-            itemsMoved += bagItem.getCount();
+            itemsMoved += bagItem.stackSize;
             chest.setInventorySlotContents(islotChest, bagItem);
-            stacks.set(islotStacks, ItemStack.EMPTY);
-            bagItem = ItemStack.EMPTY;
+            stacks[islotStacks]= UtilItemStack.EMPTY;
+            bagItem = UtilItemStack.EMPTY;
             break;//move to next bag item, we're done here
           }
           else {
@@ -237,7 +236,7 @@ public class UtilInventoryTransfer {
             continue;
           }
         }
-        if (chestItem == ItemStack.EMPTY) {
+        if (chestItem == UtilItemStack.EMPTY) {
           //chest item is null, and were trying to merge (check is probably redundant here)
           continue;//go to next chest item
         }
@@ -248,23 +247,23 @@ public class UtilInventoryTransfer {
         bagItem = stacks.get(islotStacks);
         if (UtilItemStack.canMerge(bagItem, chestItem)) {
           chestMax = chestItem.getItem().getItemStackLimit(chestItem);
-          room = chestMax - chestItem.getCount();
+          room = chestMax - chestItem.stackSize;
           if (room <= 0) {
             continue;//no room on this chest slot, so move to next slot
           } // no room, check the next spot
           // so if i have 30 room, and 28 items, i deposit 28.
           // or if i have 30 room and 38 items, i deposit 30
-          toDeposit = Math.min(bagItem.getCount(), room);
+          toDeposit = Math.min(bagItem.stackSize, room);
           chestItem.grow(toDeposit);
           chest.setInventorySlotContents(islotChest, chestItem);
           bagItem.shrink(toDeposit);
           itemsMoved += toDeposit;
-          if (bagItem.getCount() <= 0) {
+          if (bagItem.stackSize <= 0) {
             // item stacks with zero count do not destroy
             // themselves, they show
             // up and have unexpected behavior in game so set to
             // empty
-            stacks.set(islotStacks, ItemStack.EMPTY);
+            stacks.set(islotStacks, UtilItemStack.EMPTY);
           }
           else {
             // set to new quantity

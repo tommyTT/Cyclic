@@ -1,5 +1,6 @@
 package com.lothrazar.cyclicmagic.component.playerextensions;
 import com.lothrazar.cyclicmagic.gui.ContainerBase;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import com.lothrazar.cyclicmagic.util.UtilPlayerInventoryFilestorage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -91,7 +92,7 @@ public class ContainerPlayerExtended extends ContainerBase {
    */
   @Override
   public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int iSlot) {
-    ItemStack itemstack = ItemStack.EMPTY;
+    ItemStack itemstack = UtilItemStack.EMPTY;
     Slot slot = (Slot) this.inventorySlots.get(iSlot);
     int playerStart = 36, playerEnd = 63, topStart = 4, topEnd = 36, hotbarStart = 63, hotbarEnd = 72, armorStart = 0, armorEnd = 4;
     //36 to 62 is lower
@@ -104,28 +105,28 @@ public class ContainerPlayerExtended extends ContainerBase {
         //int armorSlot = 8 - armor.armorType.getIndex();
         //if (!this.mergeItemStack(copy, armorSlot, armorSlot + 1, false)) { return null; }
         if (armorStart <= iSlot && iSlot < armorEnd) {
-          if (!this.mergeItemStack(copy, playerStart, playerEnd, false)) { return ItemStack.EMPTY; }
+          if (!this.mergeItemStack(copy, playerStart, playerEnd, false)) { return UtilItemStack.EMPTY; }
         }
         else {
-          if (!this.mergeItemStack(copy, 0, 4, false)) { return ItemStack.EMPTY; }
+          if (!this.mergeItemStack(copy, 0, 4, false)) { return UtilItemStack.EMPTY; }
         }
       }
       else if (playerStart <= iSlot && iSlot < playerEnd) {
-        if (!this.mergeItemStack(copy, topStart, topEnd, false)) { return ItemStack.EMPTY; }
+        if (!this.mergeItemStack(copy, topStart, topEnd, false)) { return UtilItemStack.EMPTY; }
       }
       else if (topStart <= iSlot && iSlot < topEnd) {
-        if (!this.mergeItemStack(copy, playerStart, playerEnd, false)) { return ItemStack.EMPTY; }
+        if (!this.mergeItemStack(copy, playerStart, playerEnd, false)) { return UtilItemStack.EMPTY; }
       }
       else if (hotbarStart <= iSlot && iSlot < hotbarEnd) {
-        if (!this.mergeItemStack(copy, topStart, topEnd, false)) { return ItemStack.EMPTY; }
+        if (!this.mergeItemStack(copy, topStart, topEnd, false)) { return UtilItemStack.EMPTY; }
       }
-      if (copy.getCount() == 0) {
-        slot.putStack(ItemStack.EMPTY);
+      if (copy.stackSize == 0) {
+        slot.putStack(UtilItemStack.EMPTY);
       }
       else {
         slot.onSlotChanged();
       }
-      if (copy.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
+      if (copy.stackSize == itemstack.stackSize) { return UtilItemStack.EMPTY; }
       slot.onTake(par1EntityPlayer, copy);
     }
     return itemstack;
@@ -144,11 +145,11 @@ public class ContainerPlayerExtended extends ContainerBase {
     Slot slot;
     ItemStack itemstack1;
     if (par1ItemStack.isStackable()) {
-      while (par1ItemStack.getCount() > 0 && (!par4 && k < par3 || par4 && k >= par2)) {
+      while (par1ItemStack.stackSize > 0 && (!par4 && k < par3 || par4 && k >= par2)) {
         slot = (Slot) this.inventorySlots.get(k);
         itemstack1 = slot.getStack();
-        if (itemstack1 != ItemStack.EMPTY && itemstack1.getItem() == par1ItemStack.getItem() && (!par1ItemStack.getHasSubtypes() || par1ItemStack.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(par1ItemStack, itemstack1)) {
-          int l = itemstack1.getCount() + par1ItemStack.getCount();
+        if (itemstack1 != UtilItemStack.EMPTY && itemstack1.getItem() == par1ItemStack.getItem() && (!par1ItemStack.getHasSubtypes() || par1ItemStack.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(par1ItemStack, itemstack1)) {
+          int l = itemstack1.stackSize + par1ItemStack.stackSize;
           if (l <= par1ItemStack.getMaxStackSize()) {
             // if (ss instanceof SlotBauble) unequipBauble(par1ItemStack);
             par1ItemStack.setCount(0);
@@ -156,9 +157,9 @@ public class ContainerPlayerExtended extends ContainerBase {
             slot.onSlotChanged();
             flag1 = true;
           }
-          else if (itemstack1.getCount() < par1ItemStack.getMaxStackSize()) {
+          else if (itemstack1.stackSize < par1ItemStack.getMaxStackSize()) {
             // if (ss instanceof SlotBauble) unequipBauble(par1ItemStack);
-            par1ItemStack.setCount(par1ItemStack.getCount() - par1ItemStack.getMaxStackSize() - itemstack1.getCount());
+            par1ItemStack.setCount(par1ItemStack.stackSize - par1ItemStack.getMaxStackSize() - itemstack1.stackSize);
             itemstack1.setCount(par1ItemStack.getMaxStackSize());
             slot.onSlotChanged();
             flag1 = true;
@@ -172,7 +173,7 @@ public class ContainerPlayerExtended extends ContainerBase {
         }
       }
     }
-    if (par1ItemStack.getCount() > 0) {
+    if (par1ItemStack.stackSize > 0) {
       if (par4) {
         k = par3 - 1;
       }
@@ -182,7 +183,7 @@ public class ContainerPlayerExtended extends ContainerBase {
       while (!par4 && k < par3 || par4 && k >= par2) {
         slot = (Slot) this.inventorySlots.get(k);
         itemstack1 = slot.getStack();
-        if (itemstack1 == null || itemstack1.isEmpty()) {
+        if (itemstack1 == null || itemstack1== UtilItemStack.EMPTY) {
           // if (ss instanceof SlotBauble) unequipBauble(par1ItemStack);
           slot.putStack(par1ItemStack.copy());
           slot.onSlotChanged();

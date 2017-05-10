@@ -1,6 +1,7 @@
 package com.lothrazar.cyclicmagic.component.workbench;
 import com.lothrazar.cyclicmagic.gui.ContainerBaseMachine;
 import com.lothrazar.cyclicmagic.util.Const;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -27,7 +28,7 @@ public class ContainerWorkBench extends ContainerBaseMachine {
   private World world;
   public ContainerWorkBench(InventoryPlayer inventoryPlayer, TileEntityWorkbench te) {
     craftMatrix = new InventoryWorkbench(this, te);
-    this.world = inventoryPlayer.player.world;
+    this.world = inventoryPlayer.player.worldObj;
     tileEntity = te;
     this.addSlotToContainer(new SlotCrafting(inventoryPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));
     int slot = 0;
@@ -57,7 +58,7 @@ public class ContainerWorkBench extends ContainerBaseMachine {
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
-    ItemStack stack = ItemStack.EMPTY;
+    ItemStack stack = UtilItemStack.EMPTY;
     Slot slotObject = (Slot) inventorySlots.get(slot);
     // null checks and checks if the item can be stacked (maxStackSize > 1)
     if (slotObject != null && slotObject.getHasStack()) {
@@ -65,18 +66,18 @@ public class ContainerWorkBench extends ContainerBaseMachine {
       stack = stackInSlot.copy();
       // merges the item into player inventory since its in the tileEntity
       if (slot < tileEntity.getSizeInventory()) {
-        if (!this.mergeItemStack(stackInSlot, tileEntity.getSizeInventory(), 36 + tileEntity.getSizeInventory(), true)) { return ItemStack.EMPTY; }
+        if (!this.mergeItemStack(stackInSlot, tileEntity.getSizeInventory(), 36 + tileEntity.getSizeInventory(), true)) { return UtilItemStack.EMPTY; }
       }
       // places it into the tileEntity is possible since its in the player
       // inventory
-      else if (!this.mergeItemStack(stackInSlot, 0, tileEntity.getSizeInventory(), false)) { return ItemStack.EMPTY; }
+      else if (!this.mergeItemStack(stackInSlot, 0, tileEntity.getSizeInventory(), false)) { return UtilItemStack.EMPTY; }
       if (stackInSlot.getCount() == 0) {
-        slotObject.putStack(ItemStack.EMPTY);
+        slotObject.putStack(UtilItemStack.EMPTY);
       }
       else {
         slotObject.onSlotChanged();
       }
-      if (stackInSlot.getCount() == stack.getCount()) { return ItemStack.EMPTY; }
+      if (stackInSlot.getCount() == stack.getCount()) { return UtilItemStack.EMPTY; }
       slotObject.onTake(player, stackInSlot);
     }
     return stack;

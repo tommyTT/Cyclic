@@ -1,5 +1,6 @@
 package com.lothrazar.cyclicmagic.gui;
 import com.lothrazar.cyclicmagic.util.Const;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
@@ -26,6 +27,6 @@ public class ContainerBaseMachine extends ContainerBase {
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
-    return ItemStack.EMPTY;
+    return UtilItemStack.EMPTY;
   }
 }

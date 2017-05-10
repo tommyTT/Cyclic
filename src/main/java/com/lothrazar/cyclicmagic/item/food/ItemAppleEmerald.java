@@ -53,7 +53,7 @@ public class ItemAppleEmerald extends BaseItem implements IHasRecipe {
     EntityPlayer player = (EntityPlayer) event.getEntity();
     //    ItemStack held = player.getHeldItemMainhand();
     ItemStack itemstack = event.getItemStack();
-    if (itemstack != null && itemstack.getItem() instanceof ItemAppleEmerald && itemstack.getCount() > 0) {
+    if (itemstack != null && itemstack.getItem() instanceof ItemAppleEmerald && itemstack.stackSize > 0) {
       if (event.getTarget() instanceof EntityVillager) {
         EntityVillager villager = ((EntityVillager) event.getTarget());
         int count = 0;
@@ -67,7 +67,7 @@ public class ItemAppleEmerald extends BaseItem implements IHasRecipe {
         if (count > 0) {
           UtilChat.addChatMessage(player, UtilChat.lang("item.apple_emerald.merchant") + count);
           itemstack.shrink(1);
-          if (itemstack.getCount() == 0) {
+          if (itemstack.stackSize == 0) {
             itemstack = ItemStack.EMPTY;
           }
         }

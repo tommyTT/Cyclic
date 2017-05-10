@@ -1,12 +1,11 @@
 package com.lothrazar.cyclicmagic.gui;
 import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.item.ItemStack; 
 import net.minecraft.util.text.ITextComponent;
 
 public class InventoryBase {
-  protected ItemStack[] inv;
+  public ItemStack[] inv;
   public InventoryBase(int invoSize) {
     inv = new ItemStack[invoSize];
   }

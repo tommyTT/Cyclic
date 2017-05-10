@@ -59,7 +59,7 @@ public class InventoryPlayerExtended extends InventoryBase implements IInventory
   //  public ItemStack decrStackSize(int index, int count) {
   //    if (this.inv[index] != null) {
   //      ItemStack itemstack;
-  //      if (this.inv[index].getCount()  <= count) {
+  //      if (this.inv[index].stackSize  <= count) {
   //        itemstack = this.inv[index];
   //        this.inv[index] = null;
   //        if (eventHandler != null)
@@ -69,7 +69,7 @@ public class InventoryPlayerExtended extends InventoryBase implements IInventory
   //      }
   //      else {
   //        itemstack = this.inv[index].splitStack(count);
-  //        if (this.inv[index].getCount()  == 0) {
+  //        if (this.inv[index].stackSize  == 0) {
   //          this.inv[index] = null;
   //        }
   //        if (eventHandler != null)
@@ -93,7 +93,7 @@ public class InventoryPlayerExtended extends InventoryBase implements IInventory
   }
   @Override
   public int getSizeInventory() {
-    return this.inv.size();
+    return this.inv.length;
   }
   @Override
   public ItemStack getStackInSlot(int s) {

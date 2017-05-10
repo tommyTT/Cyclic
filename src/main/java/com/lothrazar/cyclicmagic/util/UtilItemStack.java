@@ -21,25 +21,23 @@ public class UtilItemStack {
    * @return
    */
   public static boolean canMerge(ItemStack chestItem, ItemStack bagItem) {
-    if (chestItem.isEmpty() || bagItem.isEmpty()) { return false; }
+    if (chestItem== UtilItemStack.EMPTY || bagItem== UtilItemStack.EMPTY) { return false; }
     return (bagItem.getItem().equals(chestItem.getItem())
         && bagItem.getItemDamage() == chestItem.getItemDamage()
         && ItemStack.areItemStackTagsEqual(bagItem, chestItem));
   }
   public static int mergeItemsBetweenStacks(ItemStack takeFrom, ItemStack moveTo) {
-    int room = moveTo.getMaxStackSize() - moveTo.getCount();
+    int room = moveTo.getMaxStackSize() - moveTo.stackSize;
     int moveover = 0;
     if (room > 0) {
-      moveover = Math.min(takeFrom.getCount(), room);
-      //      moveTo.stackSize += moveover;
-      //      takeFrom.stackSize -= moveover;
-      moveTo.grow(moveover);
-      takeFrom.shrink(moveover);
+      moveover = Math.min(takeFrom.stackSize, room);
+            moveTo.stackSize += moveover;
+            takeFrom.stackSize -= moveover;
     }
     return moveover;
   }
   public static int getMaxDmgFraction(Item tool, int d) {
-    return tool.getMaxDamage() - (int) MathHelper.floor(tool.getMaxDamage() / d);
+    return tool.getMaxDamage() - (int) MathHelper.floor_double(tool.getMaxDamage() / d);
   }
   public static void damageItem(EntityLivingBase p, ItemStack s) {
     if (p instanceof EntityPlayer) {
@@ -97,15 +95,14 @@ public class UtilItemStack {
     return dropItemStackInWorld(worldObj, pos, new ItemStack(item));
   }
   public static EntityItem dropItemStackInWorld(World worldObj, BlockPos pos, ItemStack stack) {
-<<<<<<< HEAD
+ 
     if(pos == null || stack == null){return null;}
-    EntityItem entityItem = new EntityItem(worldObj, pos.getX(), pos.getY(), pos.getZ(), stack);
-=======
+ 
     EntityItem entityItem = new EntityItem(worldObj, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
->>>>>>> 20387e5c63533fa94077cd04ad382147bc676ead
+ 
     if (worldObj.isRemote == false) {
       // do not spawn a second 'ghost' one onclient side
-      worldObj.spawnEntity(entityItem);
+      worldObj.spawnEntityInWorld(entityItem);
     }
     return entityItem;
   }
@@ -115,7 +112,7 @@ public class UtilItemStack {
     }
   }
   public static boolean isEmpty(ItemStack is) {
-    return is == null || is.isEmpty() || is == ItemStack.EMPTY;
+    return is == null || is== UtilItemStack.EMPTY || is == UtilItemStack.EMPTY;
   }
   public static String getStringForItemStack(ItemStack itemStack) {
     Item item = itemStack.getItem();

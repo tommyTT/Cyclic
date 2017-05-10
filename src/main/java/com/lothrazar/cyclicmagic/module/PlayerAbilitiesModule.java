@@ -2,6 +2,7 @@ package com.lothrazar.cyclicmagic.module;
 import com.lothrazar.cyclicmagic.IHasConfig;
 import com.lothrazar.cyclicmagic.util.Const;
 import com.lothrazar.cyclicmagic.util.UtilFurnace;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import com.lothrazar.cyclicmagic.util.UtilNBT;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -125,7 +126,7 @@ public class PlayerAbilitiesModule extends BaseEventModule implements IHasConfig
         if (firstLine == null) {
           firstLine = "";
         }
-        if (firstLine.isEmpty() || firstLine.split(" ").length == 0) {
+        if (firstLine== null || firstLine.split(" ").length == 0) {
           held.setTagCompound(null);
         }
         else {
@@ -174,7 +175,7 @@ public class PlayerAbilitiesModule extends BaseEventModule implements IHasConfig
       TileEntity tile = worldObj.getTileEntity(pos);
       if (tile instanceof TileEntityFurnace) {
         TileEntityFurnace furnace = (TileEntityFurnace) tile;
-        if (held.isEmpty()) {
+        if (held== UtilItemStack.EMPTY) {
           UtilFurnace.extractFurnaceOutput(furnace, entityPlayer);
         }
         else {
@@ -190,14 +191,14 @@ public class PlayerAbilitiesModule extends BaseEventModule implements IHasConfig
       }
     }
     if (easyEnderChest) {
-      if (held != ItemStack.EMPTY && held.getItem() == Item.getItemFromBlock(Blocks.ENDER_CHEST)) {
+      if (held !=UtilItemStack.EMPTY && held.getItem() == Item.getItemFromBlock(Blocks.ENDER_CHEST)) {
         entityPlayer.displayGUIChest(entityPlayer.getInventoryEnderChest());
       }
     }
     if (editableSigns) {
       if (pos == null) { return; }
       TileEntity tile = worldObj.getTileEntity(pos);
-      if (held == ItemStack.EMPTY && tile instanceof TileEntitySign) {
+      if (held == UtilItemStack.EMPTY && tile instanceof TileEntitySign) {
         TileEntitySign sign = (TileEntitySign) tile;
         if (worldObj.isRemote == true) {//this method has    @SideOnly(Side.CLIENT) flag
           sign.setEditable(true);

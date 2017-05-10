@@ -1,4 +1,5 @@
 package com.lothrazar.cyclicmagic.component.workbench;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
@@ -26,18 +27,18 @@ public class InventoryWorkbench extends InventoryCrafting {
    */
   @Override
   public ItemStack decrStackSize(int index, int count) {
-    if (this.getStackInSlot(index).isEmpty()) { return ItemStack.EMPTY; }
+    if (this.getStackInSlot(index).isEmpty()) { return UtilItemStack.EMPTY; }
     ItemStack stack;
     if (this.getStackInSlot(index).getCount() <= count) {
       stack = this.getStackInSlot(index);
-      this.setInventorySlotContents(index, ItemStack.EMPTY);
+      this.setInventorySlotContents(index, UtilItemStack.EMPTY);
       this.container.onCraftMatrixChanged(this);
       return stack;
     }
     else {
       stack = this.getStackInSlot(index).splitStack(count);
       if (this.getStackInSlot(index).getCount() == 0) {
-        this.setInventorySlotContents(index, ItemStack.EMPTY);
+        this.setInventorySlotContents(index, UtilItemStack.EMPTY);
       }
       this.container.onCraftMatrixChanged(this);
       return stack;

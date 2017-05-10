@@ -165,7 +165,7 @@ public class TileEntityBlockMiner extends TileEntityBaseMachineInvo implements I
   }
   private void tryEquipItem() {
     //only equip if empty handed, dont spam
-    if (fakePlayer.get().getHeldItem(EnumHand.MAIN_HAND).isEmpty()) {
+    if (fakePlayer.get().getHeldItem(EnumHand.MAIN_HAND)== UtilItemStack.EMPTY) {
       ItemStack unbreakingPickaxe = new ItemStack(Items.DIAMOND_PICKAXE, 1);
       unbreakingPickaxe.addEnchantment(Enchantments.EFFICIENCY, 3);
       unbreakingPickaxe.setTagCompound(new NBTTagCompound());

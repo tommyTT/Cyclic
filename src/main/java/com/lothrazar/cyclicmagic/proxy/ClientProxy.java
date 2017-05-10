@@ -70,11 +70,11 @@ public class ClientProxy extends CommonProxy {
   }
   @Override
   public World getClientWorld() {
-    return FMLClientHandler.instance().getClient().world;
+    return FMLClientHandler.instance().getClient().theWorld;
   }
   @Override
   public EntityPlayer getClientPlayer() {
-    return Minecraft.getMinecraft().player;
+    return Minecraft.getMinecraft().thePlayer;
   }
   private void registerKeys() {
     if (KeyInventoryShiftModule.enableInvoKeys) {
@@ -244,7 +244,7 @@ public class ClientProxy extends CommonProxy {
     super.setPlayerReach(player, currentReach);
     Minecraft mc = Minecraft.getMinecraft();
     try {
-      if (player == mc.player && !(mc.playerController instanceof ReachPlayerController)) {
+      if (player == mc.thePlayer && !(mc.playerController instanceof ReachPlayerController)) {
         GameType type = ReflectionHelper.getPrivateValue(PlayerControllerMP.class, mc.playerController, CURRENT_GAME_TYPE);
         NetHandlerPlayClient netHandler = ReflectionHelper.getPrivateValue(PlayerControllerMP.class, mc.playerController, NET_CLIENT_HANDLER);
         ReachPlayerController controller = new ReachPlayerController(mc, netHandler);

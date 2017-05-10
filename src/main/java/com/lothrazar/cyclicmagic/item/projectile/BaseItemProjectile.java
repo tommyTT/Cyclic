@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 
 public abstract class BaseItemProjectile extends BaseItem {
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand) {
+  public ActionResult<ItemStack> onItemRightClick(ItemStack ss,World worldIn, EntityPlayer playerIn, EnumHand hand) {
     ItemStack h = playerIn.getHeldItem(hand);
     onItemThrow(h, worldIn, playerIn, hand);
     return new ActionResult<ItemStack>(EnumActionResult.PASS, h);
@@ -31,7 +31,7 @@ public abstract class BaseItemProjectile extends BaseItem {
       // func_184538_a
       //zero pitch offset, meaning match the players existing. 1.0 at end ins inn
       thing.setHeadingFromThrower(player, player.rotationPitch, player.rotationYaw, PITCHOFFSET, velocity, INACCURACY_DEFAULT);
-      world.spawnEntity(thing);
+      world.spawnEntityInWorld(thing);
     }
     player.swingArm(hand);
     BlockPos pos = player.getPosition();

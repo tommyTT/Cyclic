@@ -45,8 +45,8 @@ public class GearPurpleModule extends BaseEventModule implements IHasConfig {
         },
         mimicArmor.getEnchantability(),
         mimicArmor.getSoundEvent(),
-        mimicArmor.getToughness());
-    MaterialRegistry.powerArmorMaterial.repairMaterial = new ItemStack(Blocks.OBSIDIAN);
+        mimicArmor.getToughness()); 
+    MaterialRegistry.powerArmorMaterial.customCraftingMaterial = new ItemStack(Blocks.OBSIDIAN);
   }
   @Override
   public void syncConfig(Configuration config) {

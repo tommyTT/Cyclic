@@ -40,7 +40,7 @@ public class GuideRegistry {
         case BLOCKPLATE:
           return new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE);
         case ITEMBAUBLES:
-          return new ItemStack(Items.TOTEM);
+          return new ItemStack(Items.ACACIA_BOAT);
         case ITEMTHROW:
           return new ItemStack(Items.ELYTRA);
         default:

@@ -27,7 +27,7 @@ public class ItemAppleLapis extends BaseItem implements IHasRecipe {
     EntityPlayer player = (EntityPlayer) event.getEntity();
     //    ItemStack held = player.getHeldItemMainhand();
     ItemStack itemstack = event.getItemStack();
-    if (itemstack != null && itemstack.getItem() instanceof ItemAppleLapis && itemstack.getCount() > 0) {
+    if (itemstack != null && itemstack.getItem() instanceof ItemAppleLapis && itemstack.stackSize > 0) {
       if (event.getTarget() instanceof EntityZombieHorse || event.getTarget() instanceof EntitySkeletonHorse) {
         AbstractHorse h = (AbstractHorse) event.getTarget();
         if (h.isTame() == false) {
@@ -35,7 +35,7 @@ public class ItemAppleLapis extends BaseItem implements IHasRecipe {
           h.setEatingHaystack(true);
           //        UtilChat.addChatMessage(player, UtilChat.lang("item.apple_emerald.merchant"));
           itemstack.shrink(1);
-          if (itemstack.getCount() == 0) {
+          if (itemstack.stackSize == 0) {
             itemstack = ItemStack.EMPTY;
           }
           event.setCanceled(true);// stop the GUI inventory opening && horse mounting

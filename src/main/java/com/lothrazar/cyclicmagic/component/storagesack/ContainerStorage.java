@@ -54,7 +54,7 @@ public class ContainerStorage extends ContainerBase {
     ItemStack wand = UtilPlayer.getPlayerItemIfHeld(player);
     // this will prevent the player from interacting with the item that
     // opened the inventory:
-    if (slot >= 0 && getSlot(slot) != null && getSlot(slot).getStack() == wand) { return ItemStack.EMPTY; }
+    if (slot >= 0 && getSlot(slot) != null && getSlot(slot).getStack() == wand) { return UtilItemStack.EMPTY; }
     return super.slotClick(slot, dragType, clickTypeIn, player);
   }
   @Override
@@ -63,7 +63,7 @@ public class ContainerStorage extends ContainerBase {
   }
   @Override
   public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int index) {
-    ItemStack itemstack = ItemStack.EMPTY;
+    ItemStack itemstack = UtilItemStack.EMPTY;
     Slot slot = (Slot) this.inventorySlots.get(index);
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
@@ -73,7 +73,7 @@ public class ContainerStorage extends ContainerBase {
         // try to place in player inventory / action bar
         if (!this.mergeItemStack(itemstack1, INV_START, HOTBAR_END + 1, true)) {
           inventory.markDirty();
-          return ItemStack.EMPTY;
+          return UtilItemStack.EMPTY;
         }
         slot.onSlotChange(itemstack1, itemstack);
       }
@@ -84,33 +84,33 @@ public class ContainerStorage extends ContainerBase {
           // place in custom inventory
           if (!this.mergeItemStack(itemstack1, 0, INV_START, false)) {
             inventory.markDirty();
-            return ItemStack.EMPTY;
+            return UtilItemStack.EMPTY;
           }
         }
         if (index >= INV_START && index < HOTBAR_START) {
           // place in action bar
           if (!this.mergeItemStack(itemstack1, HOTBAR_START, HOTBAR_END + 1, false)) {
             inventory.markDirty();
-            return ItemStack.EMPTY;
+            return UtilItemStack.EMPTY;
           }
         }
         // item in action bar - place in player inventory
         else if (index >= HOTBAR_START && index < HOTBAR_END + 1) {
           if (!this.mergeItemStack(itemstack1, INV_START, INV_END + 1, false)) {
             inventory.markDirty();
-            return ItemStack.EMPTY;
+            return UtilItemStack.EMPTY;
           }
         }
       }
       if (itemstack1.getCount() == 0) {
-        slot.putStack(ItemStack.EMPTY);
+        slot.putStack(UtilItemStack.EMPTY);
       }
       else {
         slot.onSlotChanged();
       }
       if (itemstack1.getCount() == itemstack.getCount()) {
         inventory.markDirty();
-        return ItemStack.EMPTY;
+        return UtilItemStack.EMPTY;
       }
       slot.onTake(par1EntityPlayer, itemstack1);
     }

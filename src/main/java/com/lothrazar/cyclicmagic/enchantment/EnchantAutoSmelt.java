@@ -2,6 +2,7 @@ package com.lothrazar.cyclicmagic.enchantment;
 import java.util.ArrayList;
 import java.util.List;
 import com.lothrazar.cyclicmagic.registry.GuideRegistry;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Enchantments;
@@ -40,9 +41,9 @@ public class EnchantAutoSmelt extends EnchantBase {
     drops.clear();//works since byref
     for (ItemStack drop : dropsCopy) {
       ItemStack fromSmelted = FurnaceRecipes.instance().getSmeltingResult(drop);
-      if (fromSmelted != ItemStack.EMPTY) {
-        if (fromSmelted.getCount() == 0) { //wtf!?!?! why how does this happen? idk whatever fixed
-          fromSmelted.setCount(1);
+      if (fromSmelted != UtilItemStack.EMPTY) {
+        if (fromSmelted.stackSize == 0) { //wtf!?!?! why how does this happen? idk whatever fixed
+          fromSmelted.stackSize=1;
         }
         drops.add(fromSmelted);//smelt it up yo!
       }

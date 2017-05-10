@@ -46,14 +46,14 @@ public class ContainerFisher extends ContainerBaseMachine {
       // places it into the tileEntity is possible since its in the player
       // inventory
       else if (!this.mergeItemStack(stackInSlot, 0, tileEntity.getSizeInventory(), false)) { return UtilItemStack.EMPTY; }
-      if (stackInSlot.getCount() == 0) {
+      if (stackInSlot.stackSize == 0) {
         slotObject.putStack(UtilItemStack.EMPTY);
       }
       else {
         slotObject.onSlotChanged();
       }
-      if (stackInSlot.getCount() == stack.getCount()) { return UtilItemStack.EMPTY; }
-      slotObject.onTake(player, stackInSlot);
+      if (stackInSlot.stackSize == stack.stackSize) { return UtilItemStack.EMPTY; }
+      slotObject.onPickupFromSlot(player, stackInSlot);
     }
     return stack;
   }

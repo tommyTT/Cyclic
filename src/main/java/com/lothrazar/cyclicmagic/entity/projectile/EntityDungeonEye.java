@@ -32,7 +32,7 @@ public class EntityDungeonEye extends EntityThrowableDispensable {
   }
   @Override
   public void onUpdate() {
-    if (!this.world.isRemote) {
+    if (!this.getEntityWorld().isRemote) {
       this.lastTickPosX = this.posX;
       this.lastTickPosY = this.posY;
       this.lastTickPosZ = this.posZ;
@@ -40,7 +40,7 @@ public class EntityDungeonEye extends EntityThrowableDispensable {
       this.posX += this.motionX;
       this.posY += this.motionY;
       this.posZ += this.motionZ;
-      float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+      float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
       double distX = Math.abs(this.targetX - this.posX);
       double distY = Math.abs(this.targetY - this.posY);
       double distZ = Math.abs(this.targetZ - this.posZ);

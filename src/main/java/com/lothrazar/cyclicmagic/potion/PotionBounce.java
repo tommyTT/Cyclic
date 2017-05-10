@@ -33,7 +33,7 @@ public class PotionBounce extends PotionBase {
       }
       else {
         UtilSound.playSound(player, player.getPosition(), SoundEvents.BLOCK_SLIME_FALL, SoundCategory.PLAYERS, UtilSound.VOLUME / event.getDistance());
-        UtilParticle.spawnParticle(player.world, EnumParticleTypes.SLIME, player.getPosition());
+        UtilParticle.spawnParticle(player.worldObj, EnumParticleTypes.SLIME, player.getPosition());
         event.setDistance(0);// fall distance
         player.motionY *= -PERCENT_HEIGHT_BOUNCED;
         player.isAirBorne = true;

@@ -3,11 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-<<<<<<< HEAD:src/main/java/com/lothrazar/cyclicmagic/block/tileentity/TileEntityFishing.java
-import com.lothrazar.cyclicmagic.ModCyclic;
-=======
 import com.lothrazar.cyclicmagic.block.tileentity.TileEntityBaseMachineInvo;
->>>>>>> 20387e5c63533fa94077cd04ad382147bc676ead:src/main/java/com/lothrazar/cyclicmagic/component/fisher/TileEntityFishing.java
 import com.lothrazar.cyclicmagic.util.Const;
 import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import com.lothrazar.cyclicmagic.util.UtilNBT;
@@ -96,29 +92,22 @@ public class TileEntityFishing extends TileEntityBaseMachineInvo implements ITic
   }
   public boolean isEquipmentValid() {
     ItemStack equip = this.getStackInSlot(toolSlot);
-<<<<<<< HEAD:src/main/java/com/lothrazar/cyclicmagic/block/tileentity/TileEntityFishing.java
     if(equip == null){
       return false;
     }    
-    String itemsClass = equip.getItem().getClass().getName();
     
     if (equip.getItem() instanceof ItemFishingRod) { return true; }
-=======
-    if (equip.isEmpty()) { return false; }
+ 
+    if (equip==null) { return false; }
     if (equip.getItem() instanceof ItemFishingRod) { return true; }
     String itemsClass = equip.getItem().getClass().getName();
->>>>>>> 20387e5c63533fa94077cd04ad382147bc676ead:src/main/java/com/lothrazar/cyclicmagic/component/fisher/TileEntityFishing.java
     String aquaBase = "com.teammetallurgy.aquaculture.items.";
     if (itemsClass.equals(aquaBase + "ItemAquacultureWoodenFishingRod")
         || itemsClass.equals(aquaBase + "ItemAquacultureFishingRod")
         || itemsClass.equals(aquaBase + "ItemAdminAquacultureFishingRod")
-<<<<<<< HEAD:src/main/java/com/lothrazar/cyclicmagic/block/tileentity/TileEntityFishing.java
         || itemsClass.equals(aquaBase + "ItemAdminFishingRod")
           ) { return true; }
     
-=======
-        || itemsClass.equals(aquaBase + "ItemAdminFishingRod")) { return true; }
->>>>>>> 20387e5c63533fa94077cd04ad382147bc676ead:src/main/java/com/lothrazar/cyclicmagic/component/fisher/TileEntityFishing.java
     return false;
   }
   @Override

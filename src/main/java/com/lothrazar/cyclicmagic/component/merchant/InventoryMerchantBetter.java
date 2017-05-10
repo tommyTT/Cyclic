@@ -7,7 +7,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryMerchant;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -42,12 +41,12 @@ public class InventoryMerchantBetter extends InventoryMerchant implements IInven
   }
   public ItemStack decrStackSize(int index, int count) {
     ItemStack itemstack = (ItemStack) this.getStackInSlot(index);
-    if (index == 2 && !itemstack.isEmpty()) {
-      return ItemStackHelper.getAndSplit(this.inv, index, itemstack.getCount());
+    if (index == 2 && !(itemstack== UtilItemStack.EMPTY)) {
+      return ItemStackHelper.getAndSplit(this.inv, index, itemstack.stackSize);
     }
     else {
       ItemStack itemstack1 = ItemStackHelper.getAndSplit(this.inv, index, count);
-      if (!itemstack1.isEmpty() && this.inventoryResetNeededOnSlotChange(index)) {
+      if (!(itemstack1== UtilItemStack.EMPTY) && this.inventoryResetNeededOnSlotChange(index)) {
         this.resetRecipeAndSlots();
       }
       return itemstack1;
@@ -63,7 +62,7 @@ public class InventoryMerchantBetter extends InventoryMerchant implements IInven
   public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
     if (index > this.getSizeInventory()) { return; }
     this.inv[index]= stack;
-    //    if (stack != null && stack.getCount() > this.getInventoryStackLimit()) {
+    //    if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
     //      stack = this.getInventoryStackLimit();
     //    }
     if (this.inventoryResetNeededOnSlotChange(index)) {

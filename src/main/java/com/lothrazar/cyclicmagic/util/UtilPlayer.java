@@ -13,14 +13,14 @@ import net.minecraft.util.EnumHand;
 public class UtilPlayer {
   public static ItemStack getPlayerItemIfHeld(EntityPlayer player) {
     ItemStack wand = player.getHeldItemMainhand();
-    if (wand == ItemStack.EMPTY) {
+    if (wand == UtilItemStack.EMPTY) {
       wand = player.getHeldItemOffhand();
     }
     return wand;
   }
   public static IBlockState getBlockstateFromSlot(EntityPlayer player, int slot) {
     ItemStack stack = player.inventory.getStackInSlot(slot);
-    if (stack != ItemStack.EMPTY &&
+    if (stack != UtilItemStack.EMPTY &&
         stack.getItem() != null &&
         Block.getBlockFromItem(stack.getItem()) != null) {
       Block b = Block.getBlockFromItem(stack.getItem());
@@ -33,7 +33,7 @@ public class UtilPlayer {
     ItemStack stack;
     for (int i = 9; i < 36; i++) {
       stack = player.inventory.getStackInSlot(i);
-      if (stack != ItemStack.EMPTY &&
+      if (stack != UtilItemStack.EMPTY &&
           stack.getItem() != null &&
           Block.getBlockFromItem(stack.getItem()) != Blocks.AIR) { return i; }
     }
@@ -50,14 +50,14 @@ public class UtilPlayer {
     ItemStack top = player.inventory.getStackInSlot(topNumber);
     ItemStack mid = player.inventory.getStackInSlot(midNumber);
     ItemStack low = player.inventory.getStackInSlot(lowNumber);
-    player.inventory.setInventorySlotContents(currentItem, ItemStack.EMPTY);
+    player.inventory.setInventorySlotContents(currentItem, UtilItemStack.EMPTY);
     player.inventory.setInventorySlotContents(currentItem, top);// lot so 0 gets
     // what 9 had
-    player.inventory.setInventorySlotContents(topNumber, ItemStack.EMPTY);
+    player.inventory.setInventorySlotContents(topNumber, UtilItemStack.EMPTY);
     player.inventory.setInventorySlotContents(topNumber, mid);
-    player.inventory.setInventorySlotContents(midNumber, ItemStack.EMPTY);
+    player.inventory.setInventorySlotContents(midNumber, UtilItemStack.EMPTY);
     player.inventory.setInventorySlotContents(midNumber, low);
-    player.inventory.setInventorySlotContents(lowNumber, ItemStack.EMPTY);
+    player.inventory.setInventorySlotContents(lowNumber, UtilItemStack.EMPTY);
     player.inventory.setInventorySlotContents(lowNumber, bar);
   }
   public static void shiftSlotUp(EntityPlayer player, int currentItem) {
@@ -71,14 +71,14 @@ public class UtilPlayer {
     ItemStack top = player.inventory.getStackInSlot(topNumber);
     ItemStack mid = player.inventory.getStackInSlot(midNumber);
     ItemStack low = player.inventory.getStackInSlot(lowNumber);
-    player.inventory.setInventorySlotContents(currentItem, ItemStack.EMPTY);
+    player.inventory.setInventorySlotContents(currentItem, UtilItemStack.EMPTY);
     player.inventory.setInventorySlotContents(currentItem, low);// lot so 0 gets
     // what 9 had
-    player.inventory.setInventorySlotContents(lowNumber, ItemStack.EMPTY);
+    player.inventory.setInventorySlotContents(lowNumber, UtilItemStack.EMPTY);
     player.inventory.setInventorySlotContents(lowNumber, mid);
-    player.inventory.setInventorySlotContents(midNumber, ItemStack.EMPTY);
+    player.inventory.setInventorySlotContents(midNumber, UtilItemStack.EMPTY);
     player.inventory.setInventorySlotContents(midNumber, top);
-    player.inventory.setInventorySlotContents(topNumber, ItemStack.EMPTY);
+    player.inventory.setInventorySlotContents(topNumber, UtilItemStack.EMPTY);
     player.inventory.setInventorySlotContents(topNumber, bar);
   }
   public static void shiftBarDown(EntityPlayer player) {
@@ -116,7 +116,7 @@ public class UtilPlayer {
   }
   public static void decrStackSize(EntityPlayer entityPlayer, EnumHand hand) {
     if (entityPlayer.capabilities.isCreativeMode == false) {
-      entityPlayer.getHeldItem(hand).shrink(1);
+      entityPlayer.getHeldItem(hand).stackSize--;
     }
   }
   public static boolean hasValidOpenContainer(EntityPlayer p) {
@@ -141,9 +141,9 @@ public class UtilPlayer {
     }
   }
   public static Item getItemArmorSlot(EntityPlayer player, EntityEquipmentSlot slot) {
-    ItemStack inslot = player.inventory.armorInventory.get(slot.getIndex());
+    ItemStack inslot = player.inventory.armorInventory[slot.getIndex()];
     //    ItemStack inslot = player.inventory.armorInventory[slot.getIndex()];
-    Item item = (inslot == ItemStack.EMPTY) ? null : inslot.getItem();
+    Item item = (inslot == UtilItemStack.EMPTY) ? null : inslot.getItem();
     return item;
   }
 }

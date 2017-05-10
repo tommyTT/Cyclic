@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import com.lothrazar.cyclicmagic.ModCyclic;
 import com.lothrazar.cyclicmagic.registry.GuideRegistry;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,7 +55,7 @@ public class EnchantReach extends EnchantBase {
     //Ticking
     ItemStack armor = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
     int level = 0;
-    if (armor.isEmpty() == false && EnchantmentHelper.getEnchantments(armor) != null
+    if (armor== UtilItemStack.EMPTY == false && EnchantmentHelper.getEnchantments(armor) != null
         && EnchantmentHelper.getEnchantments(armor).containsKey(this)) {
       //todo: maybe any armor?
       level = EnchantmentHelper.getEnchantments(armor).get(this);

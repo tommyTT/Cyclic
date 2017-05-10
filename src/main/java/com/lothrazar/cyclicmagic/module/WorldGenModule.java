@@ -181,7 +181,7 @@ public class WorldGenModule extends BaseEventModule implements IHasConfig {
     nether_redstone_ore.setPickaxeHarvestLevel(ironHarvest).setSpawnType(SpawnType.SILVERFISH, 2);
     BlockRegistry.registerBlock(nether_redstone_ore, "nether_redstone_ore", null);
     nether_redstone_ore.registerSmeltingOutput(Items.REDSTONE);
-    nether_iron_ore = new BlockDimensionOre(Items.field_191525_da, 0, 12);//iron nugget
+    nether_iron_ore = new BlockDimensionOre(Items.IRON_INGOT, 0, 1);//iron nugget
     nether_iron_ore.setPickaxeHarvestLevel(ironHarvest).setSpawnType(SpawnType.SILVERFISH, 2);
     BlockRegistry.registerBlock(nether_iron_ore, "nether_iron_ore", null);
     nether_iron_ore.registerSmeltingOutput(Items.IRON_INGOT);
@@ -230,7 +230,7 @@ public class WorldGenModule extends BaseEventModule implements IHasConfig {
     end_gold_ore.setPickaxeHarvestLevel(goldHarvest).setSpawnType(SpawnType.ENDERMITE, 2);
     BlockRegistry.registerBlock(end_gold_ore, "end_gold_ore", null);
     end_gold_ore.registerSmeltingOutput(Items.GOLD_INGOT);
-    end_iron_ore = new BlockDimensionOre(Items.field_191525_da, 0, 16);//iron nugget
+    end_iron_ore = new BlockDimensionOre(Items.IRON_INGOT, 0, 1);//iron nugget
     end_iron_ore.setPickaxeHarvestLevel(ironHarvest).setSpawnType(SpawnType.ENDERMITE, 2);
     BlockRegistry.registerBlock(end_iron_ore, "end_iron_ore", null);
     end_iron_ore.registerSmeltingOutput(Items.IRON_INGOT);

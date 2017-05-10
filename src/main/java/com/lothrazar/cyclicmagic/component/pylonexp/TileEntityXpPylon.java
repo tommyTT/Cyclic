@@ -110,7 +110,7 @@ public class TileEntityXpPylon extends TileEntityBaseMachineInvo implements ITic
     ItemStack fullOnes = this.getStackInSlot(SLOT_INPUT);
     fullOnes.shrink(1);
     if (fullOnes.getCount() == 0) {
-      fullOnes = ItemStack.EMPTY;
+      fullOnes = UtilItemStack.EMPTY;
     }
     this.setInventorySlotContents(SLOT_INPUT, fullOnes);
   }

@@ -14,6 +14,7 @@ import com.lothrazar.cyclicmagic.registry.LootTableRegistry.ChestType;
 import com.lothrazar.cyclicmagic.registry.PotionEffectRegistry;
 import com.lothrazar.cyclicmagic.util.Const;
 import com.lothrazar.cyclicmagic.util.Const.Potions;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -298,7 +299,7 @@ public class ItemPotionModule extends BaseEventModule implements IHasConfig {
         new ItemStack(output));
   }
   private static BrewingRecipe addBrewingRecipe(ItemStack input, ItemStack ingredient, ItemStack output) {
-    if (input.isEmpty() || input.getItem() == null) { return null; }
+    if (input== UtilItemStack.EMPTY || input.getItem() == null) { return null; }
     BrewingRecipe recipe = new BrewingRecipe(
         input,
         ingredient,

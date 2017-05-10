@@ -55,7 +55,7 @@ public class EnchantXpBoost extends EnchantBase {
       EntityXPOrb orb = new EntityXPOrb(world);
       orb.setPositionAndUpdate(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
       orb.xpValue = xp;
-      world.spawnEntity(orb);
+      world.spawnEntityInWorld(orb);
     }
   }
 }
