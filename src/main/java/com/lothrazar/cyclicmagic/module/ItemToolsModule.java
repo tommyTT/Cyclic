@@ -14,6 +14,7 @@ import com.lothrazar.cyclicmagic.component.storagesack.ItemStorageBag;
 import com.lothrazar.cyclicmagic.item.ItemChestSack;
 import com.lothrazar.cyclicmagic.item.ItemChestSackEmpty;
 import com.lothrazar.cyclicmagic.item.ItemClimbingGlove;
+import com.lothrazar.cyclicmagic.item.ItemDeepBucket;
 import com.lothrazar.cyclicmagic.item.ItemEnderBag;
 import com.lothrazar.cyclicmagic.item.ItemPaperCarbon;
 import com.lothrazar.cyclicmagic.item.ItemPasswordRemote;
@@ -108,42 +109,11 @@ public class ItemToolsModule extends BaseEventModule implements IHasConfig {
   private boolean enablePlayerLauncher;
   public static ItemStorageBag storage_bag;//ref by ContainerStorage
   public static RenderLoc renderLocation;
-  /**
-   * BIG thank you to this MIT licensed source code
-   * 
-   * https://github.com/romelo333/notenoughwands1.8.8/blob/2fee100fe9441828eb54dc7ec6a233c9b278e753/src/main/java/romelo333/notenoughwands/proxy/ClientProxy.java
-   * 
-   * @param evt
-   */
-  @SideOnly(Side.CLIENT)
-  @SubscribeEvent
-  public void renderOverlay(RenderWorldLastEvent evt) {
-    Minecraft mc = Minecraft.getMinecraft();
-    EntityPlayerSP p = mc.player;
-    ItemStack heldItem = p.getHeldItemMainhand();
-    if (heldItem == null) { return; }
-    if (heldItem.getItem() instanceof ItemToolSwap) {
-      RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
-      if (mouseOver != null && mouseOver.getBlockPos() != null && mouseOver.sideHit != null) {
-        IBlockState state = p.world.getBlockState(mouseOver.getBlockPos());
-        Block block = state.getBlock();
-        if (block != null && block.getMaterial(state) != Material.AIR) {
-          ItemToolSwap wandInstance = (ItemToolSwap) heldItem.getItem();
-          IBlockState matched = null;
-          if (wandInstance.getWandType() == WandType.MATCH) {
-            matched = p.getEntityWorld().getBlockState(mouseOver.getBlockPos());
-          }
-          List<BlockPos> places = PacketSwapBlock.getSelectedBlocks(p.getEntityWorld(), mouseOver.getBlockPos(),
-              ActionType.values()[ActionType.get(heldItem)], wandInstance.getWandType(),
-              mouseOver.sideHit, matched);
-          Set<BlockPos> coordinates = new HashSet<BlockPos>(places);
-          UtilWorld.OutlineRenderer.renderOutlines(evt, p, coordinates, 75, 0, 130);
-        }
-      }
-    }
-  }
   @Override
   public void onPreInit() {
+    ItemDeepBucket mega_bucket = new ItemDeepBucket();
+    ItemRegistry.register(mega_bucket, "mega_bucket");
+    
     if (enablePlayerLauncher) {
       ItemToolLaunch tool_launcher = new ItemToolLaunch();
       ItemRegistry.register(tool_launcher, "tool_launcher");
@@ -334,6 +304,41 @@ public class ItemToolsModule extends BaseEventModule implements IHasConfig {
       ItemRegistry.register(tool_randomize, "tool_randomize");
       ModCyclic.instance.events.register(tool_randomize);
       ItemRegistry.registerWithJeiDescription(tool_randomize);
+    }
+  }
+
+  /**
+   * BIG thank you to this MIT licensed source code
+   * 
+   * https://github.com/romelo333/notenoughwands1.8.8/blob/2fee100fe9441828eb54dc7ec6a233c9b278e753/src/main/java/romelo333/notenoughwands/proxy/ClientProxy.java
+   * 
+   * @param evt
+   */
+  @SideOnly(Side.CLIENT)
+  @SubscribeEvent
+  public void renderOverlay(RenderWorldLastEvent evt) {
+    Minecraft mc = Minecraft.getMinecraft();
+    EntityPlayerSP p = mc.player;
+    ItemStack heldItem = p.getHeldItemMainhand();
+    if (heldItem == null) { return; }
+    if (heldItem.getItem() instanceof ItemToolSwap) {
+      RayTraceResult mouseOver = Minecraft.getMinecraft().objectMouseOver;
+      if (mouseOver != null && mouseOver.getBlockPos() != null && mouseOver.sideHit != null) {
+        IBlockState state = p.world.getBlockState(mouseOver.getBlockPos());
+        Block block = state.getBlock();
+        if (block != null && block.getMaterial(state) != Material.AIR) {
+          ItemToolSwap wandInstance = (ItemToolSwap) heldItem.getItem();
+          IBlockState matched = null;
+          if (wandInstance.getWandType() == WandType.MATCH) {
+            matched = p.getEntityWorld().getBlockState(mouseOver.getBlockPos());
+          }
+          List<BlockPos> places = PacketSwapBlock.getSelectedBlocks(p.getEntityWorld(), mouseOver.getBlockPos(),
+              ActionType.values()[ActionType.get(heldItem)], wandInstance.getWandType(),
+              mouseOver.sideHit, matched);
+          Set<BlockPos> coordinates = new HashSet<BlockPos>(places);
+          UtilWorld.OutlineRenderer.renderOutlines(evt, p, coordinates, 75, 0, 130);
+        }
+      }
     }
   }
   @Override
