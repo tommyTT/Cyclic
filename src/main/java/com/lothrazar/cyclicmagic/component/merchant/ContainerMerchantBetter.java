@@ -75,16 +75,9 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
     if (slot != null && slot.getHasStack()) {
       ItemStack itemstack1 = slot.getStack();
       itemstack = itemstack1.copy();
-      //      if (index == SLOT_OUTPUT) {
-      //        if (!this.mergeItemStack(itemstack1, INV_START, HOTBAR_END + 1, true)) { return null; }
-      //        slot.onSlotChange(itemstack1, itemstack);
-      //      }
-      //      else if (index != SLOT_INPUT && index != SLOT_INPUTX) { //so it must be a player slot
-      //        if (!this.mergeItemStack(itemstack1, SLOT_INPUT, SLOT_INPUTX + 1, false)) { return null; }
-      //      }
-      //      else {//so it is 0,1
+ 
       if (!this.mergeItemStack(itemstack1, INV_START, HOTBAR_END + 1, false)) { return ItemStack.EMPTY; }
-      //      }
+  
       //cleanup steps
       if (UtilItemStack.getCount(itemstack1) == 0) {
         slot.putStack(ItemStack.EMPTY);
@@ -92,7 +85,7 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
       else {
         slot.onSlotChanged();
       }
-      if (itemstack1.getCount() == itemstack.getCount()) { return ItemStack.EMPTY; }
+      if (UtilItemStack.getCount(itemstack1) == UtilItemStack.getCount(itemstack)) { return ItemStack.EMPTY; }
       slot.onTake(playerIn, itemstack1);
     }
     return itemstack;
@@ -122,10 +115,10 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
     boolean canTrade = false;
     for (int i = 0; i <= 3 * 9; i++) {
       iStack = player.inventory.getStackInSlot(i);
-      if (iStack == ItemStack.EMPTY) {
+      if (UtilItemStack.isEmpty(iStack)) {
         continue;
       }
-      if (firstItem == ItemStack.EMPTY &&
+      if (UtilItemStack.isEmpty(firstItem) &&
           iStack.getItem() == itemToBuy.getItem() && UtilItemStack.getCount(iStack) >= UtilItemStack.getCount(itemToBuy)) {
         firstItem = iStack;
         firstSlot = i;
@@ -144,16 +137,12 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
     boolean tradeSuccess = false;
     if (canTrade) {
       if (!secondItem.isEmpty()) {
-        UtilItemStack.shrink(firstItem,itemToBuy.getCount());
-//        firstItem.shrink(itemToBuy.getCount());
-        UtilItemStack.shrink(secondItem,itemSecondBuy.getCount());
-//        secondItem.shrink(itemSecondBuy.getCount());
+        UtilItemStack.shrink(firstItem, UtilItemStack.getCount(itemToBuy));
+        UtilItemStack.shrink(secondItem, UtilItemStack.getCount(itemSecondBuy));
         tradeSuccess = true;
       }
-      if (itemSecondBuy.isEmpty() && secondItem.isEmpty()) {
-
-        UtilItemStack.shrink(firstItem,itemToBuy.getCount());
-//        firstItem.shrink(itemToBuy.getCount());
+      if (UtilItemStack.isEmpty(itemSecondBuy) && UtilItemStack.isEmpty(secondItem)) {
+        UtilItemStack.shrink(firstItem, UtilItemStack.getCount(itemToBuy));
         tradeSuccess = true;
       }
     }
@@ -162,8 +151,7 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
       player.entityDropItem(purchased, 0);
       this.merchant.useRecipe(trade);
       player.addStat(StatList.TRADED_WITH_VILLAGER);
- 
-      if (  UtilItemStack.getCount(firstItem) == 0) {//firstItem.getCount()
+      if (UtilItemStack.getCount(firstItem) == 0) {//firstItem.getCount()
         player.inventory.setInventorySlotContents(firstSlot, ItemStack.EMPTY);
       }
       if (!UtilItemStack.isEmpty(secondItem) && UtilItemStack.getCount(secondItem) == 0) {
