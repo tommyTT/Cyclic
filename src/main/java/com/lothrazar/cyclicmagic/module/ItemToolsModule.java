@@ -147,7 +147,7 @@ public class ItemToolsModule extends BaseEventModule implements IHasConfig {
   public void onPreInit() {
     if (enablePlayerLauncher) {
       ItemToolLaunch tool_launcher = new ItemToolLaunch();
-      ItemRegistry.register(tool_launcher, "tool_launcher");
+      ItemRegistry.register(tool_launcher, "tool_launcher",GuideCategory.TRANSPORT);
       ModCyclic.instance.events.register(tool_launcher);
     }
     if (enableSoulstone) {
@@ -165,7 +165,7 @@ public class ItemToolsModule extends BaseEventModule implements IHasConfig {
     }
     if (enableElevate) {
       ItemToolSurface tool_elevate = new ItemToolSurface();
-      ItemRegistry.register(tool_elevate, "tool_elevate");
+      ItemRegistry.register(tool_elevate, "tool_elevate",GuideCategory.TRANSPORT);
       LootTableRegistry.registerLoot(tool_elevate);
     }
     if (enableCGlove) {
@@ -180,7 +180,6 @@ public class ItemToolsModule extends BaseEventModule implements IHasConfig {
     if (enablewaterSpread) {
       ItemToolWaterSpreader water_spreader = new ItemToolWaterSpreader();
       ItemRegistry.register(water_spreader, "water_spreader");
-      LootTableRegistry.registerLoot(water_spreader);
     }
     if (enableFreezer) {
       ItemToolWaterIce water_freezer = new ItemToolWaterIce();
@@ -217,8 +216,8 @@ public class ItemToolsModule extends BaseEventModule implements IHasConfig {
     }
     if (enableEnderBook) {
       ItemEnderBook book_ender = new ItemEnderBook();
-      ItemRegistry.register(book_ender, "book_ender");
-      LootTableRegistry.registerLoot(book_ender, ChestType.ENDCITY);
+      ItemRegistry.register(book_ender, "book_ender",GuideCategory.TRANSPORT);
+      LootTableRegistry.registerLoot(book_ender);
       LootTableRegistry.registerLoot(book_ender);
       ItemRegistry.registerWithJeiDescription(book_ender);
     }
@@ -226,7 +225,6 @@ public class ItemToolsModule extends BaseEventModule implements IHasConfig {
       storage_bag = new ItemStorageBag();
       ItemRegistry.register(storage_bag, "storage_bag");
       ModCyclic.instance.events.register(storage_bag);
-      LootTableRegistry.registerLoot(storage_bag);
       LootTableRegistry.registerLoot(storage_bag, ChestType.BONUS);
       ItemRegistry.registerWithJeiDescription(storage_bag);
     }
@@ -311,14 +309,14 @@ public class ItemToolsModule extends BaseEventModule implements IHasConfig {
     }
     if (enableWarpHomeTool) {
       ItemToolWarp tool_warp_home = new ItemToolWarp(ItemToolWarp.WarpType.BED);
-      ItemRegistry.register(tool_warp_home, "tool_warp_home");
+      ItemRegistry.register(tool_warp_home, "tool_warp_home",GuideCategory.TRANSPORT);
       LootTableRegistry.registerLoot(tool_warp_home);
       AchievementRegistry.registerItemAchievement(tool_warp_home);
       ItemRegistry.registerWithJeiDescription(tool_warp_home);
     }
     if (enableWarpSpawnTool) {
       ItemToolWarp tool_warp_spawn = new ItemToolWarp(ItemToolWarp.WarpType.SPAWN);
-      ItemRegistry.register(tool_warp_spawn, "tool_warp_spawn");
+      ItemRegistry.register(tool_warp_spawn, "tool_warp_spawn",GuideCategory.TRANSPORT);
       LootTableRegistry.registerLoot(tool_warp_spawn);
       ItemRegistry.registerWithJeiDescription(tool_warp_spawn);
     }
