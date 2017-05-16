@@ -139,4 +139,13 @@ public class UtilItemStack {
     }
     return new ItemStack(item, 1, i);
   }
+  public static void shrink(ItemStack s, int count) {
+    s.shrink(count);
+  }
+  public static void grow(ItemStack s, int count) {
+    s.grow(count);
+  }
+  public static int getCount(ItemStack firstItem) {
+   return firstItem.getCount();
+  }
 }

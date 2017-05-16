@@ -3,6 +3,7 @@ import javax.annotation.Nullable;
 import com.lothrazar.cyclicmagic.ModCyclic;
 import com.lothrazar.cyclicmagic.gui.ContainerBaseMachine;
 import com.lothrazar.cyclicmagic.util.UtilEntity;
+import com.lothrazar.cyclicmagic.util.UtilItemStack;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -85,7 +86,7 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
       if (!this.mergeItemStack(itemstack1, INV_START, HOTBAR_END + 1, false)) { return ItemStack.EMPTY; }
       //      }
       //cleanup steps
-      if (itemstack1.getCount() == 0) {
+      if (UtilItemStack.getCount(itemstack1) == 0) {
         slot.putStack(ItemStack.EMPTY);
       }
       else {
@@ -125,7 +126,7 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
         continue;
       }
       if (firstItem == ItemStack.EMPTY &&
-          iStack.getItem() == itemToBuy.getItem() && iStack.getCount() >= itemToBuy.getCount()) {
+          iStack.getItem() == itemToBuy.getItem() && UtilItemStack.getCount(iStack) >= UtilItemStack.getCount(itemToBuy)) {
         firstItem = iStack;
         firstSlot = i;
       }
@@ -143,15 +144,16 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
     boolean tradeSuccess = false;
     if (canTrade) {
       if (!secondItem.isEmpty()) {
-        //        firstItem.stackSize -= itemToBuy.stackSize;
-        //        secondItem.stackSize -= itemSecondBuy.stackSize;
-        firstItem.shrink(itemToBuy.getCount());
-        secondItem.shrink(itemSecondBuy.getCount());
+        UtilItemStack.shrink(firstItem,itemToBuy.getCount());
+//        firstItem.shrink(itemToBuy.getCount());
+        UtilItemStack.shrink(secondItem,itemSecondBuy.getCount());
+//        secondItem.shrink(itemSecondBuy.getCount());
         tradeSuccess = true;
       }
       if (itemSecondBuy.isEmpty() && secondItem.isEmpty()) {
-        //        firstItem.stackSize -= itemToBuy.stackSize;
-        firstItem.shrink(itemToBuy.getCount());
+
+        UtilItemStack.shrink(firstItem,itemToBuy.getCount());
+//        firstItem.shrink(itemToBuy.getCount());
         tradeSuccess = true;
       }
     }
@@ -160,10 +162,11 @@ public class ContainerMerchantBetter extends ContainerBaseMachine {
       player.entityDropItem(purchased, 0);
       this.merchant.useRecipe(trade);
       player.addStat(StatList.TRADED_WITH_VILLAGER);
-      if (firstItem.getCount() == 0) {
+ 
+      if (  UtilItemStack.getCount(firstItem) == 0) {//firstItem.getCount()
         player.inventory.setInventorySlotContents(firstSlot, ItemStack.EMPTY);
       }
-      if (!secondItem.isEmpty() && secondItem.getCount() == 0) {
+      if (!UtilItemStack.isEmpty(secondItem) && UtilItemStack.getCount(secondItem) == 0) {
         player.inventory.setInventorySlotContents(secondSlot, ItemStack.EMPTY);
       }
     }
