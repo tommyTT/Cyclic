@@ -2,6 +2,9 @@
     "variants": {
         "facing=north":  { "model": "cyclicmagic:fan", "y": 180, "uvlock": true  },
         "facing=south":  { "model": "cyclicmagic:fan" },
+        "facing=up":  { "model": "cyclicmagic:fan", "z":180 },
+        "facing=down":  { "model": "cyclicmagic:fan", "z":-180 },
+        "facing=west":  { "model": "cyclicmagic:fan", "y": 90, "uvlock": true },
         "facing=west":  { "model": "cyclicmagic:fan", "y": 90, "uvlock": true },
         "facing=east": { "model": "cyclicmagic:fan", "y": 270, "uvlock": true  }
     }
