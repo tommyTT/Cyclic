@@ -14,6 +14,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 
 public abstract class BlockPump extends BlockBaseFacingOmni {
 
@@ -22,14 +25,14 @@ public abstract class BlockPump extends BlockBaseFacingOmni {
   /**
    * Virtual properties used for the multipart cable model and determining the presence of adjacent inventories
    */
-  protected static final Map<EnumFacing, PropertyEnum<EnumConnectType>> PROPERTIES = Maps.newEnumMap(
-      new ImmutableMap.Builder<EnumFacing, PropertyEnum<EnumConnectType>>()
-          .put(EnumFacing.DOWN, PropertyEnum.create("down", EnumConnectType.class))
-          .put(EnumFacing.UP, PropertyEnum.create("up", EnumConnectType.class))
-          .put(EnumFacing.NORTH, PropertyEnum.create("north", EnumConnectType.class))
-          .put(EnumFacing.SOUTH, PropertyEnum.create("south", EnumConnectType.class))
-          .put(EnumFacing.WEST, PropertyEnum.create("west", EnumConnectType.class))
-          .put(EnumFacing.EAST, PropertyEnum.create("east", EnumConnectType.class))
+  protected static final Map<EnumFacing, IUnlistedProperty<EnumConnectType>> PROPERTIES = Maps.newEnumMap(
+      new ImmutableMap.Builder<EnumFacing, IUnlistedProperty<EnumConnectType>>()
+          .put(EnumFacing.DOWN, Properties.toUnlisted(PropertyEnum.create("down", EnumConnectType.class)))
+          .put(EnumFacing.UP, Properties.toUnlisted(PropertyEnum.create("up", EnumConnectType.class)))
+          .put(EnumFacing.NORTH, Properties.toUnlisted(PropertyEnum.create("north", EnumConnectType.class)))
+          .put(EnumFacing.SOUTH, Properties.toUnlisted(PropertyEnum.create("south", EnumConnectType.class)))
+          .put(EnumFacing.WEST, Properties.toUnlisted(PropertyEnum.create("west", EnumConnectType.class)))
+          .put(EnumFacing.EAST, Properties.toUnlisted(PropertyEnum.create("east", EnumConnectType.class)))
           .build());
   public BlockPump() {
     super(Material.ROCK);
@@ -61,14 +64,28 @@ public abstract class BlockPump extends BlockBaseFacingOmni {
       return false;//allows, for example, you to open chest that is directly below
     return true;
   }
+  @Override
+  public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    IExtendedBlockState ext = (IExtendedBlockState) state;
+    //  TileEntity te = world.getTileEntity(pos);
+    // if (te instanceof MyTE) {
+    for (EnumFacing val : EnumFacing.values())//TODO: get real here
+    {
+      IUnlistedProperty<EnumConnectType> property = PROPERTIES.get(val);
+      ext = ext.withProperty(property, EnumConnectType.NONE);
+    }
+    //}
+    return ext;
+  }
 
   @Override
   protected BlockStateContainer createBlockState() {
     BlockStateContainer.Builder builder = new BlockStateContainer.Builder(this);
-    //    for (PropertyEnum<EnumConnectType> property : PROPERTIES.values()) {
-    //      builder.add(property);
-    //    }
+    //listed properties first before unlisted
     builder.add(BlockDirectional.FACING);
+    for (IUnlistedProperty<EnumConnectType> property : PROPERTIES.values()) {
+      builder.add(property);
+    }
     return builder.build();
   }
 
